@@ -3,7 +3,11 @@ mod key;
 mod keyboard;
 mod linux;
 
-use std::{io, thread, time::Duration};
+use std::{
+    io::{self, Stdout},
+    thread,
+    time::Duration,
+};
 
 use backend::KeyBackend;
 use crossterm::{
@@ -15,9 +19,9 @@ use key::Key;
 use linux::X11;
 use tui::{
     backend::CrosstermBackend,
-    layout::{Constraint, Direction, Layout, Rect},
-    widgets::{Block, Borders},
-    Terminal,
+    layout::{Alignment, Constraint, Direction, Layout, Rect},
+    widgets::{Block, Borders, Paragraph},
+    Frame, Terminal,
 };
 
 struct KeySize {
@@ -53,6 +57,22 @@ fn make_row_constraints(keys: &[KeyUI]) -> Vec<Constraint> {
         .collect()
 }
 
+fn draw_row(row_keys: &[KeyUI], rect: Rect, frame: &mut Frame<CrosstermBackend<Stdout>>) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints(make_row_constraints(row_keys).as_ref())
+        .split(rect);
+
+    for (pos, ui_key) in row_keys.iter().enumerate() {
+        let block = Block::default().borders(Borders::ALL);
+        let text = Paragraph::new(ui_key.key.to_string())
+            .block(block)
+            .alignment(Alignment::Center);
+
+        frame.render_widget(text, chunks[pos])
+    }
+}
+
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     // let receiver = X11.subscribe()?;
 
@@ -80,44 +100,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         println!("r1 rect {:?}", r1_rect);
         println!("r2 rect {:?}", r2_rect);
 
-        let r1_chunks = Layout::default()
-            .direction(Direction::Horizontal)
-            .constraints(make_row_constraints(&keyboard::R1).as_ref())
-            .split(r1_rect);
-
-        for (pos, ui_key) in keyboard::R1.iter().enumerate() {
-            let block = Block::default()
-                .title(ui_key.key.to_string())
-                .borders(Borders::ALL);
-
-            f.render_widget(block, r1_chunks[pos])
-        }
-
-        let r2_chunks = Layout::default()
-            .direction(Direction::Horizontal)
-            .constraints(make_row_constraints(&keyboard::R2).as_ref())
-            .split(r2_rect);
-
-        for (pos, ui_key) in keyboard::R2.iter().enumerate() {
-            let block = Block::default()
-                .title(ui_key.key.to_string())
-                .borders(Borders::ALL);
-
-            f.render_widget(block, r2_chunks[pos])
-        }
-
-        let r3_chunks = Layout::default()
-            .direction(Direction::Horizontal)
-            .constraints(make_row_constraints(&keyboard::R3).as_ref())
-            .split(r3_rect);
-
-        for (pos, ui_key) in keyboard::R3.iter().enumerate() {
-            let block = Block::default()
-                .title(ui_key.key.to_string())
-                .borders(Borders::ALL);
-
-            f.render_widget(block, r3_chunks[pos])
-        }
+        draw_row(&keyboard::R1, r1_rect, f);
+        draw_row(&keyboard::R2, r2_rect, f);
+        draw_row(&keyboard::R3, r3_rect, f);
     })?;
 
     thread::sleep(Duration::from_millis(10000));
