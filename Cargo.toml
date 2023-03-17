@@ -7,3 +7,5 @@ edition = "2021"
 
 [dependencies]
 x11rb = "0.11.1"
+tui = "0.19"
+crossterm = "0.25"
