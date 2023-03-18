@@ -28,10 +28,31 @@ pub enum Key {
     B,
     N,
     M,
+
+    // Numbers
+    One,
+    Two,
+    Three,
+    Four,
+    Five,
+    Six,
+    Seven,
+    Eight,
+    Nine,
+    Zero,
+
     // Symbols
+    Grave,
+    Hyphen,
+    Plus,
     LeftBracket,
     RightBracket,
     Backslash,
+    SemiColon,
+    Apostrophe,
+    Comma,
+    Period,
+    QuestionMark,
     // modifiers
     Tab,
     CapsLock,
@@ -53,9 +74,27 @@ pub enum Key {
 impl fmt::Display for Key {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            Key::LeftBracket => write!(f, "[{{"),
-            Key::RightBracket => write!(f, "]}}"),
+            Key::LeftBracket => write!(f, "{{["),
+            Key::RightBracket => write!(f, "}}]"),
             Key::Backslash => write!(f, "|\\"),
+            Key::SemiColon => write!(f, ":;"),
+            Key::Apostrophe => write!(f, "\"'"),
+            Key::Comma => write!(f, "<,"),
+            Key::Period => write!(f, ">."),
+            Key::QuestionMark => write!(f, "?/"),
+            Key::One => write!(f, "1"),
+            Key::Two => write!(f, "2"),
+            Key::Three => write!(f, "3"),
+            Key::Four => write!(f, "4"),
+            Key::Five => write!(f, "5"),
+            Key::Six => write!(f, "6"),
+            Key::Seven => write!(f, "7"),
+            Key::Eight => write!(f, "8"),
+            Key::Nine => write!(f, "9"),
+            Key::Zero => write!(f, "0"),
+            Key::Hyphen => write!(f, "-"),
+            Key::Plus => write!(f, "+"),
+            Key::Grave => write!(f, "~`"),
             _ => write!(f, "{:?}", self),
         }
     }

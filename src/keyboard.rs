@@ -1,6 +1,65 @@
 use crate::{key::Key, KeyUI};
 
-pub const R1: [KeyUI; 14] = [
+pub const R4_1: [KeyUI; 14] = [
+    KeyUI {
+        key: Key::Grave,
+        size: 1.0,
+    },
+    KeyUI {
+        key: Key::One,
+        size: 1.0,
+    },
+    KeyUI {
+        key: Key::Two,
+        size: 1.0,
+    },
+    KeyUI {
+        key: Key::Three,
+        size: 1.0,
+    },
+    KeyUI {
+        key: Key::Four,
+        size: 1.0,
+    },
+    KeyUI {
+        key: Key::Five,
+        size: 1.0,
+    },
+    KeyUI {
+        key: Key::Six,
+        size: 1.0,
+    },
+    KeyUI {
+        key: Key::Seven,
+        size: 1.0,
+    },
+    KeyUI {
+        key: Key::Eight,
+        size: 1.0,
+    },
+    KeyUI {
+        key: Key::Nine,
+        size: 1.0,
+    },
+    KeyUI {
+        key: Key::Zero,
+        size: 1.0,
+    },
+    KeyUI {
+        key: Key::Hyphen,
+        size: 1.0,
+    },
+    KeyUI {
+        key: Key::Plus,
+        size: 1.0,
+    },
+    KeyUI {
+        key: Key::Backspace,
+        size: 2.0,
+    },
+];
+
+pub const R3: [KeyUI; 14] = [
     KeyUI {
         key: Key::Tab,
         size: 1.5,
@@ -101,11 +160,11 @@ pub const R2: [KeyUI; 13] = [
         size: 1.0,
     },
     KeyUI {
-        key: Key::Unknown,
+        key: Key::SemiColon,
         size: 1.0,
     },
     KeyUI {
-        key: Key::Unknown,
+        key: Key::Apostrophe,
         size: 1.0,
     },
     KeyUI {
@@ -114,7 +173,7 @@ pub const R2: [KeyUI; 13] = [
     },
 ];
 
-pub const R3: [KeyUI; 12] = [
+pub const R1_0: [KeyUI; 12] = [
     KeyUI {
         key: Key::LeftShift,
         size: 2.25,
@@ -148,19 +207,50 @@ pub const R3: [KeyUI; 12] = [
         size: 1.0,
     },
     KeyUI {
-        key: Key::Unknown,
+        key: Key::Comma,
         size: 1.0,
     },
     KeyUI {
-        key: Key::Unknown,
+        key: Key::Period,
         size: 1.0,
     },
     KeyUI {
-        key: Key::Unknown,
+        key: Key::QuestionMark,
         size: 1.0,
     },
     KeyUI {
         key: Key::RightShift,
         size: 2.75,
+    },
+];
+
+pub const R1_1: [KeyUI; 7] = [
+    KeyUI {
+        key: Key::LeftCtrl,
+        size: 1.5,
+    },
+    KeyUI {
+        key: Key::LeftSuper,
+        size: 1.0,
+    },
+    KeyUI {
+        key: Key::LeftAlt,
+        size: 1.5,
+    },
+    KeyUI {
+        key: Key::Spacebar,
+        size: 6.75,
+    },
+    KeyUI {
+        key: Key::RightAlt,
+        size: 1.5,
+    },
+    KeyUI {
+        key: Key::RightSuper,
+        size: 1.0,
+    },
+    KeyUI {
+        key: Key::RightCtrl,
+        size: 1.5,
     },
 ];

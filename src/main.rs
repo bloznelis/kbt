@@ -160,13 +160,18 @@ fn view<B: Backend>(frame: &mut Frame<B>, state: &App) {
     let terminal_size: Rect = frame.size();
     let row_height = terminal_size.height / 5;
 
-    let r1_rect = Rect::new(0, 0, terminal_size.width, row_height);
-    let r2_rect = Rect::new(0, row_height, terminal_size.width, row_height);
-    let r3_rect = Rect::new(0, row_height * 2, terminal_size.width, row_height);
+    let rect_0 = Rect::new(0, 0, terminal_size.width, row_height);
+    let rect_1 = Rect::new(0, row_height, terminal_size.width, row_height);
+    let rect_2 = Rect::new(0, row_height * 2, terminal_size.width, row_height);
+    let rect_3 = Rect::new(0, row_height * 3, terminal_size.width, row_height);
+    let rect_4 = Rect::new(0, row_height * 4, terminal_size.width, row_height);
+    let rect_5 = Rect::new(0, row_height * 5, terminal_size.width, row_height);
 
-    draw_row(&keyboard::R1, state, r1_rect, frame);
-    draw_row(&keyboard::R2, state, r2_rect, frame);
-    draw_row(&keyboard::R3, state, r3_rect, frame);
+    draw_row(&keyboard::R4_1, state, rect_0, frame);
+    draw_row(&keyboard::R3, state, rect_1, frame);
+    draw_row(&keyboard::R2, state, rect_2, frame);
+    draw_row(&keyboard::R1_0, state, rect_3, frame);
+    draw_row(&keyboard::R1_1, state, rect_4, frame);
 }
 
 fn draw_row<B: Backend>(row_keys: &[KeyUI], state: &App, rect: Rect, frame: &mut Frame<B>) {
