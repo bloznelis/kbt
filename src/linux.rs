@@ -1,8 +1,8 @@
 use std::sync::mpsc::{channel, Receiver, Sender};
 use std::thread;
 
-use crate::Key;
 use crate::KeyBackend;
+use crate::{AppEvent, Key};
 use x11rb::connection::Connection;
 use x11rb::protocol::{xproto::*, Event};
 use x11rb::rust_connection::RustConnection;
@@ -10,16 +10,14 @@ use x11rb::rust_connection::RustConnection;
 pub struct X11;
 
 impl KeyBackend for X11 {
-    fn subscribe(&self) -> Result<Receiver<Key>, Box<dyn std::error::Error>> {
-        let (sender, receiver): (Sender<Key>, Receiver<Key>) = channel();
-
+    fn subscribe(&self, sender: Sender<AppEvent>) -> Result<(), Box<dyn std::error::Error>> {
         thread::spawn(move || listen_for_keypresses(sender).unwrap());
 
-        Ok(receiver)
+        Ok(())
     }
 }
 
-fn listen_for_keypresses(sender: Sender<Key>) -> Result<(), Box<dyn std::error::Error>> {
+fn listen_for_keypresses(sender: Sender<AppEvent>) -> Result<(), Box<dyn std::error::Error>> {
     let (conn, screen_num) = x11rb::connect(None).unwrap();
     let screen = &conn.setup().roots[screen_num];
     let net_active_window: Window = get_or_intern_atom(&conn, b"_NET_ACTIVE_WINDOW");
@@ -38,7 +36,7 @@ fn listen_for_keypresses(sender: Sender<Key>) -> Result<(), Box<dyn std::error::
             Event::KeyPress(key_press) => {
                 let key: Key = key_press.detail.into();
 
-                sender.send(key)?;
+                sender.send(AppEvent::KeyEvent(key))?;
             }
             // Event::KeyRelease(key_release) => println!("released {}", key_release.detail),
             // _ => println!("unexpected event! {:?}", event),
@@ -122,6 +120,7 @@ impl From<u8> for Key {
             56 => Key::B,
             57 => Key::N,
             58 => Key::M,
+            62 => Key::RightShift,
             _ => Key::Unknown,
         }
     }

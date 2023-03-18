@@ -1,7 +1,7 @@
-use std::sync::mpsc::Receiver;
+use std::sync::mpsc::Sender;
 
-use crate::Key;
+use crate::AppEvent;
 
 pub trait KeyBackend {
-    fn subscribe(&self) -> Result<Receiver<Key>, Box<dyn std::error::Error>>;
+    fn subscribe(&self, sender: Sender<AppEvent>) -> Result<(), Box<dyn std::error::Error>>;
 }

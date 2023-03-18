@@ -6,7 +6,7 @@ mod linux;
 use std::{
     collections::HashMap,
     io::{self, Stdout},
-    sync::mpsc::Receiver,
+    sync::mpsc::{channel, Receiver, Sender},
     thread,
     time::Duration,
 };
@@ -65,9 +65,17 @@ enum KeyState {
     Untouched,
 }
 
+enum ControlEventType {
+    Terminate,
+}
+enum AppEvent {
+    KeyEvent(Key),
+    ControlEvent(ControlEventType),
+}
+
 struct App {
     key_states: HashMap<Key, KeyState>,
-    key_receiver: Receiver<Key>,
+    event_receiver: Receiver<AppEvent>,
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -78,13 +86,16 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     terminal.clear()?;
 
+    let (sender, receiver): (Sender<AppEvent>, Receiver<AppEvent>) = channel();
+    X11.subscribe(sender.clone())?;
+    thread::spawn(move || listen_for_control(sender).unwrap());
+
     let initial_app = App {
         key_states: HashMap::new(),
-        key_receiver: X11.subscribe()?,
+        event_receiver: receiver,
     };
 
     let result = run(&mut terminal, initial_app);
-    // run_caputre_debug(initial_app);
 
     // restore terminal
     disable_raw_mode()?;
@@ -98,37 +109,40 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-fn run_caputre_debug(mut state: App) -> io::Result<()> {
+fn listen_for_control(sender: Sender<AppEvent>) -> io::Result<()> {
     loop {
-        //todo: handle error
-        let key_update = state.key_receiver.recv().unwrap();
-        println!("{}", key_update);
-        state.key_states.insert(key_update, KeyState::Pressed);
-    }
-}
-
-fn run<B: Backend>(terminal: &mut Terminal<B>, mut state: App) -> io::Result<()> {
-    // enable_raw_mode();
-
-    loop {
-        terminal.draw(|f| view(f, &state))?;
-
         if let Event::Key(key) = event::read()? {
             match key.code {
                 KeyCode::Char('c') => match key.modifiers {
                     KeyModifiers::CONTROL => {
-                        return Ok(());
+                        //todo: handle error
+                        sender.send(AppEvent::ControlEvent(ControlEventType::Terminate));
                     }
                     _ => {}
                 },
                 _ => {}
             }
         }
+    }
+}
 
-        //todo: handle error
-        let key_update = state.key_receiver.recv().unwrap();
-        print!("{}", key_update);
-        state.key_states.insert(key_update, KeyState::Pressed);
+fn run<B: Backend>(terminal: &mut Terminal<B>, mut state: App) -> io::Result<()> {
+    enable_raw_mode();
+
+    loop {
+        terminal.draw(|f| view(f, &state))?;
+
+        let key_update = state.event_receiver.recv().unwrap();
+        match key_update {
+            AppEvent::KeyEvent(key) => {
+                state.key_states.insert(key, KeyState::Pressed);
+            }
+            AppEvent::ControlEvent(control) => match control {
+                ControlEventType::Terminate => {
+                    return Ok(());
+                }
+            },
+        }
     }
 }
 
@@ -156,15 +170,17 @@ fn draw_row<B: Backend>(row_keys: &[KeyUI], state: &App, rect: Rect, frame: &mut
             .key_states
             .get(&ui_key.key)
             .unwrap_or(&KeyState::Untouched);
+
         let border_type = match key_state {
             KeyState::Pressed => BorderType::Double,
             KeyState::Released => BorderType::Thick,
             KeyState::Untouched => BorderType::Plain,
         };
-        // let borders = if (state.key_states)
+
         let block = Block::default()
             .borders(Borders::ALL)
             .border_type(border_type);
+
         let text = Paragraph::new(ui_key.key.to_string())
             .block(block)
             .alignment(Alignment::Center);
