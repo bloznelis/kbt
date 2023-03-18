@@ -2,7 +2,7 @@ use crate::{key::Key, KeyUI};
 
 pub const R1: [KeyUI; 14] = [
     KeyUI {
-        key: Key::Unknown,
+        key: Key::Tab,
         size: 1.5,
     },
     KeyUI {
@@ -46,22 +46,22 @@ pub const R1: [KeyUI; 14] = [
         size: 1.0,
     },
     KeyUI {
-        key: Key::Unknown,
+        key: Key::LeftBracket,
         size: 1.0,
     },
     KeyUI {
-        key: Key::Unknown,
+        key: Key::RightBracket,
         size: 1.0,
     },
     KeyUI {
-        key: Key::Unknown,
+        key: Key::Backslash,
         size: 1.5,
     },
 ];
 
 pub const R2: [KeyUI; 13] = [
     KeyUI {
-        key: Key::Unknown,
+        key: Key::CapsLock,
         size: 1.75,
     },
     KeyUI {
@@ -109,14 +109,14 @@ pub const R2: [KeyUI; 13] = [
         size: 1.0,
     },
     KeyUI {
-        key: Key::Unknown,
+        key: Key::Return,
         size: 2.25,
     },
 ];
 
 pub const R3: [KeyUI; 12] = [
     KeyUI {
-        key: Key::Unknown,
+        key: Key::LeftShift,
         size: 2.25,
     },
     KeyUI {
@@ -160,7 +160,7 @@ pub const R3: [KeyUI; 12] = [
         size: 1.0,
     },
     KeyUI {
-        key: Key::Unknown,
+        key: Key::RightShift,
         size: 2.75,
     },
 ];

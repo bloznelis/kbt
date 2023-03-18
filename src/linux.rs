@@ -89,6 +89,7 @@ fn find_active_window(
 impl From<u8> for Key {
     fn from(value: u8) -> Self {
         match value {
+            23 => Key::Tab,
             24 => Key::Q,
             25 => Key::W,
             26 => Key::E,
@@ -99,6 +100,10 @@ impl From<u8> for Key {
             31 => Key::I,
             32 => Key::O,
             33 => Key::P,
+            34 => Key::LeftBracket,
+            35 => Key::RightBracket,
+            36 => Key::Return,
+            37 => Key::LeftCtrl,
             38 => Key::A,
             39 => Key::S,
             40 => Key::D,
@@ -108,6 +113,8 @@ impl From<u8> for Key {
             44 => Key::J,
             45 => Key::K,
             46 => Key::L,
+            50 => Key::LeftShift,
+            51 => Key::Backslash,
             52 => Key::Z,
             53 => Key::X,
             54 => Key::C,
