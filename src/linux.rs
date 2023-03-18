@@ -1,8 +1,8 @@
 use std::sync::mpsc::{channel, Receiver, Sender};
 use std::thread;
 
-use crate::KeyBackend;
 use crate::{AppEvent, Key};
+use crate::{KeyBackend, KeyEventType};
 use x11rb::connection::Connection;
 use x11rb::protocol::{xproto::*, Event};
 use x11rb::rust_connection::RustConnection;
@@ -25,7 +25,7 @@ fn listen_for_keypresses(sender: Sender<AppEvent>) -> Result<(), Box<dyn std::er
 
     conn.change_window_attributes(
         focus,
-        &ChangeWindowAttributesAux::new().event_mask(EventMask::KEY_PRESS),
+        &ChangeWindowAttributesAux::new().event_mask(EventMask::KEY_PRESS | EventMask::KEY_RELEASE),
     )?;
 
     conn.flush()?;
@@ -36,9 +36,12 @@ fn listen_for_keypresses(sender: Sender<AppEvent>) -> Result<(), Box<dyn std::er
             Event::KeyPress(key_press) => {
                 let key: Key = key_press.detail.into();
 
-                sender.send(AppEvent::KeyEvent(key))?;
+                sender.send(AppEvent::KeyEvent(KeyEventType::KeyPressed(key)))?;
             }
-            // Event::KeyRelease(key_release) => println!("released {}", key_release.detail),
+            Event::KeyRelease(key_release) => {
+                let key: Key = key_release.detail.into();
+                sender.send(AppEvent::KeyEvent(KeyEventType::KeyReleased(key)))?;
+            }
             // _ => println!("unexpected event! {:?}", event),
             _ => (),
         }

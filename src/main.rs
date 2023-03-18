@@ -22,6 +22,7 @@ use linux::X11;
 use tui::{
     backend::{Backend, CrosstermBackend},
     layout::{Alignment, Constraint, Direction, Layout, Rect},
+    style::{Color, Modifier, Style},
     widgets::{Block, BorderType, Borders, Paragraph},
     Frame, Terminal,
 };
@@ -65,11 +66,17 @@ enum KeyState {
     Untouched,
 }
 
+enum KeyEventType {
+    KeyPressed(Key),
+    KeyReleased(Key),
+}
+
 enum ControlEventType {
     Terminate,
 }
+
 enum AppEvent {
-    KeyEvent(Key),
+    KeyEvent(KeyEventType),
     ControlEvent(ControlEventType),
 }
 
@@ -134,8 +141,11 @@ fn run<B: Backend>(terminal: &mut Terminal<B>, mut state: App) -> io::Result<()>
 
         let key_update = state.event_receiver.recv().unwrap();
         match key_update {
-            AppEvent::KeyEvent(key) => {
+            AppEvent::KeyEvent(KeyEventType::KeyPressed(key)) => {
                 state.key_states.insert(key, KeyState::Pressed);
+            }
+            AppEvent::KeyEvent(KeyEventType::KeyReleased(key)) => {
+                state.key_states.insert(key, KeyState::Released);
             }
             AppEvent::ControlEvent(control) => match control {
                 ControlEventType::Terminate => {
@@ -177,12 +187,21 @@ fn draw_row<B: Backend>(row_keys: &[KeyUI], state: &App, rect: Rect, frame: &mut
             KeyState::Untouched => BorderType::Plain,
         };
 
+        let style = match key_state {
+            KeyState::Pressed => Style::default().fg(Color::Yellow),
+            KeyState::Released => Style::default()
+                .fg(Color::LightGreen)
+                .add_modifier(Modifier::BOLD),
+            KeyState::Untouched => Style::default(),
+        };
+
         let block = Block::default()
             .borders(Borders::ALL)
             .border_type(border_type);
 
         let text = Paragraph::new(ui_key.key.to_string())
             .block(block)
+            .style(style)
             .alignment(Alignment::Center);
 
         frame.render_widget(text, chunks[pos])
