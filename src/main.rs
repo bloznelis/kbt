@@ -168,8 +168,8 @@ fn run<B: Backend>(terminal: &mut Terminal<B>, mut state: App) -> io::Result<()>
     loop {
         terminal.draw(|f| view(f, &state))?;
 
-        let key_update = state.event_receiver.recv().unwrap();
-        match key_update {
+        let app_event = state.event_receiver.recv().unwrap();
+        match app_event {
             AppEvent::KeyEvent(KeyEventType::KeyPressed(key)) => {
                 state.key_states.insert(key, KeyState::Pressed);
             }
