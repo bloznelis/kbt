@@ -5,10 +5,8 @@ mod linux;
 
 use std::{
     collections::HashMap,
-    io::{self, Stdout},
     sync::mpsc::{channel, Receiver, Sender},
-    thread,
-    time::Duration,
+    thread, io,
 };
 
 use backend::KeyBackend;
@@ -26,10 +24,6 @@ use tui::{
     widgets::{Block, BorderType, Borders, Paragraph},
     Frame, Terminal,
 };
-
-struct KeySize {
-    size: f32,
-}
 
 pub struct KeyUI {
     key: Key,
@@ -73,6 +67,7 @@ enum KeyEventType {
 
 enum ControlEventType {
     Terminate,
+    Reset
 }
 
 enum AppEvent {
@@ -83,6 +78,12 @@ enum AppEvent {
 struct App {
     key_states: HashMap<Key, KeyState>,
     event_receiver: Receiver<AppEvent>,
+}
+
+impl App {
+    fn reset(&mut self) -> () {
+        self.key_states = HashMap::new()
+    }
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -127,6 +128,12 @@ fn listen_for_control(sender: Sender<AppEvent>) -> io::Result<()> {
                     }
                     _ => {}
                 },
+                KeyCode::Char('r') => match key.modifiers {
+                    KeyModifiers::CONTROL => {
+                        sender.send(AppEvent::ControlEvent(ControlEventType::Reset));
+                    }
+                    _ => {}
+                }
                 _ => {}
             }
         }
@@ -150,7 +157,10 @@ fn run<B: Backend>(terminal: &mut Terminal<B>, mut state: App) -> io::Result<()>
             AppEvent::ControlEvent(control) => match control {
                 ControlEventType::Terminate => {
                     return Ok(());
-                }
+               },
+               ControlEventType::Reset => {
+                   state.reset();
+               }
             },
         }
     }
