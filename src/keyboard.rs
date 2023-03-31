@@ -1,256 +1,316 @@
-use crate::{key::Key, KeyUI};
+use crate::{key::Key, KeyUI, KeySize};
 
 pub const R4_1: [KeyUI; 14] = [
     KeyUI {
         key: Key::Grave,
-        size: 1.0,
+        size: KeySize::U1,
+        size_correction: None,
     },
     KeyUI {
         key: Key::One,
-        size: 1.0,
+        size: KeySize::U1,
+        size_correction: None,
     },
     KeyUI {
         key: Key::Two,
-        size: 1.0,
+        size: KeySize::U1,
+        size_correction: None,
     },
     KeyUI {
         key: Key::Three,
-        size: 1.0,
+        size: KeySize::U1,
+        size_correction: None,
     },
     KeyUI {
         key: Key::Four,
-        size: 1.0,
+        size: KeySize::U1,
+        size_correction: None,
     },
     KeyUI {
         key: Key::Five,
-        size: 1.0,
+        size: KeySize::U1,
+        size_correction: None,
     },
     KeyUI {
         key: Key::Six,
-        size: 1.0,
+        size: KeySize::U1,
+        size_correction: None,
     },
     KeyUI {
         key: Key::Seven,
-        size: 1.0,
+        size: KeySize::U1,
+        size_correction: None,
     },
     KeyUI {
         key: Key::Eight,
-        size: 1.0,
+        size: KeySize::U1,
+        size_correction: None,
     },
     KeyUI {
         key: Key::Nine,
-        size: 1.0,
+        size: KeySize::U1,
+        size_correction: None,
     },
     KeyUI {
         key: Key::Zero,
-        size: 1.0,
+        size: KeySize::U1,
+        size_correction: None,
     },
     KeyUI {
         key: Key::Hyphen,
-        size: 1.0,
+        size: KeySize::U1,
+        size_correction: None,
     },
     KeyUI {
         key: Key::Plus,
-        size: 1.0,
+        size: KeySize::U1,
+        size_correction: None,
     },
     KeyUI {
         key: Key::Backspace,
-        size: 2.0,
+        size: KeySize::U2,
+        size_correction: None,
     },
 ];
 
 pub const R3: [KeyUI; 14] = [
     KeyUI {
         key: Key::Tab,
-        size: 1.5,
+        size: KeySize::U15,
+        size_correction: None,
     },
     KeyUI {
         key: Key::Q,
-        size: 1.0,
+        size: KeySize::U1,
+        size_correction: None,
     },
     KeyUI {
         key: Key::W,
-        size: 1.0,
+        size: KeySize::U1,
+        size_correction: None,
     },
     KeyUI {
         key: Key::E,
-        size: 1.0,
+        size: KeySize::U1,
+        size_correction: None,
     },
     KeyUI {
         key: Key::R,
-        size: 1.0,
+        size: KeySize::U1,
+        size_correction: None,
     },
     KeyUI {
         key: Key::T,
-        size: 1.0,
+        size: KeySize::U1,
+        size_correction: None,
     },
     KeyUI {
         key: Key::Y,
-        size: 1.0,
+        size: KeySize::U1,
+        size_correction: None,
     },
     KeyUI {
         key: Key::U,
-        size: 1.0,
+        size: KeySize::U1,
+        size_correction: None,
     },
     KeyUI {
         key: Key::I,
-        size: 1.0,
+        size: KeySize::U1,
+        size_correction: None,
     },
     KeyUI {
         key: Key::O,
-        size: 1.0,
+        size: KeySize::U1,
+        size_correction: None,
     },
     KeyUI {
         key: Key::P,
-        size: 1.0,
+        size: KeySize::U1,
+        size_correction: None,
     },
     KeyUI {
         key: Key::LeftBracket,
-        size: 1.0,
+        size: KeySize::U1,
+        size_correction: None,
     },
     KeyUI {
         key: Key::RightBracket,
-        size: 1.0,
+        size: KeySize::U1,
+        size_correction: None,
     },
     KeyUI {
         key: Key::Backslash,
-        size: 1.5,
+        size: KeySize::U15,
+        size_correction: Some(1),
     },
 ];
 
 pub const R2: [KeyUI; 13] = [
     KeyUI {
         key: Key::CapsLock,
-        size: 1.75,
+        size: KeySize::U175,
+        size_correction: None,
     },
     KeyUI {
         key: Key::A,
-        size: 1.0,
+        size: KeySize::U1,
+        size_correction: None,
     },
     KeyUI {
         key: Key::S,
-        size: 1.0,
+        size: KeySize::U1,
+        size_correction: None,
     },
     KeyUI {
         key: Key::D,
-        size: 1.0,
+        size: KeySize::U1,
+        size_correction: None,
     },
     KeyUI {
         key: Key::F,
-        size: 1.0,
+        size: KeySize::U1,
+        size_correction: None,
     },
     KeyUI {
         key: Key::G,
-        size: 1.0,
+        size: KeySize::U1,
+        size_correction: None,
     },
     KeyUI {
         key: Key::H,
-        size: 1.0,
+        size: KeySize::U1,
+        size_correction: None,
     },
     KeyUI {
         key: Key::J,
-        size: 1.0,
+        size: KeySize::U1,
+        size_correction: None,
     },
     KeyUI {
         key: Key::K,
-        size: 1.0,
+        size: KeySize::U1,
+        size_correction: None,
     },
     KeyUI {
         key: Key::L,
-        size: 1.0,
+        size: KeySize::U1,
+        size_correction: None,
     },
     KeyUI {
         key: Key::SemiColon,
-        size: 1.0,
+        size: KeySize::U1,
+        size_correction: None,
     },
     KeyUI {
         key: Key::Apostrophe,
-        size: 1.0,
+        size: KeySize::U1,
+        size_correction: None,
     },
     KeyUI {
         key: Key::Return,
-        size: 2.25,
+        size: KeySize::U250,
+        size_correction: None,
     },
 ];
 
 pub const R1_0: [KeyUI; 12] = [
     KeyUI {
         key: Key::LeftShift,
-        size: 2.25,
+        size: KeySize::U225,
+        size_correction: None,
     },
     KeyUI {
         key: Key::Z,
-        size: 1.0,
+        size: KeySize::U1,
+        size_correction: None,
     },
     KeyUI {
         key: Key::X,
-        size: 1.0,
+        size: KeySize::U1,
+        size_correction: None,
     },
     KeyUI {
         key: Key::C,
-        size: 1.0,
+        size: KeySize::U1,
+        size_correction: None,
     },
     KeyUI {
         key: Key::V,
-        size: 1.0,
+        size: KeySize::U1,
+        size_correction: None,
     },
     KeyUI {
         key: Key::B,
-        size: 1.0,
+        size: KeySize::U1,
+        size_correction: None,
     },
     KeyUI {
         key: Key::N,
-        size: 1.0,
+        size: KeySize::U1,
+        size_correction: None,
     },
     KeyUI {
         key: Key::M,
-        size: 1.0,
+        size: KeySize::U1,
+        size_correction: None,
     },
     KeyUI {
         key: Key::Comma,
-        size: 1.0,
+        size: KeySize::U1,
+        size_correction: None,
     },
     KeyUI {
         key: Key::Period,
-        size: 1.0,
+        size: KeySize::U1,
+        size_correction: None,
     },
     KeyUI {
         key: Key::QuestionMark,
-        size: 1.0,
+        size: KeySize::U1,
+        size_correction: None,
     },
     KeyUI {
         key: Key::RightShift,
-        size: 2.75,
+        size: KeySize::U275,
+        size_correction: None,
     },
 ];
 
 pub const R1_1: [KeyUI; 7] = [
     KeyUI {
         key: Key::LeftCtrl,
-        size: 1.5,
+        size: KeySize::U15,
+        size_correction: None,
     },
     KeyUI {
         key: Key::LeftSuper,
-        size: 1.0,
+        size: KeySize::U1,
+        size_correction: None,
     },
     KeyUI {
         key: Key::LeftAlt,
-        size: 1.5,
+        size: KeySize::U15,
+        size_correction: None,
     },
     KeyUI {
         key: Key::Spacebar,
-        size: 6.75,
+        size: KeySize::U675,
+        size_correction: Some(3),
     },
     KeyUI {
         key: Key::RightAlt,
-        size: 1.5,
+        size: KeySize::U15,
+        size_correction: None,
     },
     KeyUI {
         key: Key::RightSuper,
-        size: 1.0,
+        size: KeySize::U1,
+        size_correction: None,
     },
     KeyUI {
         key: Key::RightCtrl,
-        size: 1.5,
+        size: KeySize::U15,
+        size_correction: None,
     },
 ];

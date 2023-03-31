@@ -5,8 +5,9 @@ mod linux;
 
 use std::{
     collections::HashMap,
+    io,
     sync::mpsc::{channel, Receiver, Sender},
-    thread, io,
+    thread, vec,
 };
 
 use backend::KeyBackend;
@@ -16,6 +17,7 @@ use crossterm::{
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
 use key::Key;
+use keyboard::*;
 use linux::X11;
 use tui::{
     backend::{Backend, CrosstermBackend},
@@ -27,7 +29,34 @@ use tui::{
 
 pub struct KeyUI {
     key: Key,
-    size: f32,
+    size: KeySize,
+    size_correction: Option<u16> // To make layout look consistent
+}
+
+pub enum KeySize {
+    U1,
+    U15,
+    U175,
+    U2,
+    U225,
+    U250,
+    U275,
+    U675,
+}
+
+impl KeySize {
+    fn static_len(&self) -> u16 {
+        match self {
+            KeySize::U1 => 5,
+            KeySize::U15 => 7,
+            KeySize::U175 => 8,
+            KeySize::U2 => 10,
+            KeySize::U225 => 11,
+            KeySize::U250 => 12,
+            KeySize::U275 => 14,
+            KeySize::U675 => 34,
+        }
+    }
 }
 
 // https://support.wasdkeyboards.com/hc/en-us/articles/115009701328-Keycap-Size-Compatibility
@@ -44,13 +73,19 @@ pub struct KeyUI {
 // x -> 2u
 // -------
 // x ~= 13.333333
-fn calc_percentage(key: &KeyUI) -> u16 {
-    ((100 as f32 * key.size) / 15 as f32) as u16
-}
+//fn calc_percentage(key: &KeyUI) -> u16 {
+//((100 as f32 * key.size) / 15 as f32) as u16
+//}
 
-fn make_row_constraints(keys: &[KeyUI]) -> Vec<Constraint> {
+//fn make_row_constraints(keys: &[KeyUI]) -> Vec<Constraint> {
+//keys.iter()
+//.map(|key| Constraint::Percentage(calc_percentage(&key)))
+//.collect()
+//}
+
+fn make_row_constraints_static(keys: &[KeyUI]) -> Vec<Constraint> {
     keys.iter()
-        .map(|key| Constraint::Percentage(calc_percentage(&key)))
+        .map(|key| Constraint::Length(key.size.static_len() + key.size_correction.unwrap_or(0)))
         .collect()
 }
 
@@ -67,7 +102,7 @@ enum KeyEventType {
 
 enum ControlEventType {
     Terminate,
-    Reset
+    Reset,
 }
 
 enum AppEvent {
@@ -133,7 +168,7 @@ fn listen_for_control(sender: Sender<AppEvent>) -> io::Result<()> {
                         sender.send(AppEvent::ControlEvent(ControlEventType::Reset));
                     }
                     _ => {}
-                }
+                },
                 _ => {}
             }
         }
@@ -157,37 +192,66 @@ fn run<B: Backend>(terminal: &mut Terminal<B>, mut state: App) -> io::Result<()>
             AppEvent::ControlEvent(control) => match control {
                 ControlEventType::Terminate => {
                     return Ok(());
-               },
-               ControlEventType::Reset => {
-                   state.reset();
-               }
+                }
+                ControlEventType::Reset => {
+                    state.reset();
+                }
             },
         }
     }
 }
 
+// 1 terminal cell = 0.2u
+
+//  1u (len = 5)
+// ┏━━━┓
+// ┃ A ┃
+// ┗━━━┛
+
+//  2u (len = 10)
+// ┏━━━━━━━━┓
+// ┃  |<-   ┃
+// ┗━━━━━━━━┛
+
+fn calc_static_row_len(row_keys: &[KeyUI]) -> u16 {
+    row_keys.iter().map(|key| key.size.static_len() + key.size_correction.unwrap_or(0)).sum()
+}
+
 fn view<B: Backend>(frame: &mut Frame<B>, state: &App) {
     let terminal_size: Rect = frame.size();
-    let row_height = terminal_size.height / 5;
+    //let row_height = terminal_size.height / 5;
+    let row_height: u16 = 3;
+    let left_padding: u16 = 10; // Should be dynamic based on screen size
+    let top_padding: u16 = 20; // Should be dynamic based on screen size
+    let rows: Vec<&[KeyUI]> = vec![&R4_1, &R3, &R2, &R1_0, &R1_1];
 
-    let rect_0 = Rect::new(0, 0, terminal_size.width, row_height);
-    let rect_1 = Rect::new(0, row_height, terminal_size.width, row_height);
-    let rect_2 = Rect::new(0, row_height * 2, terminal_size.width, row_height);
-    let rect_3 = Rect::new(0, row_height * 3, terminal_size.width, row_height);
-    let rect_4 = Rect::new(0, row_height * 4, terminal_size.width, row_height);
-    let rect_5 = Rect::new(0, row_height * 5, terminal_size.width, row_height);
+    for (idx, row) in rows.iter().enumerate() {
+        let idx: u16 = u16::try_from(idx).unwrap();
+        let row_width: u16 = calc_static_row_len(row);
+        let y_offset: u16 = (row_height * idx) + top_padding;
+        let rect = Rect::new(left_padding, y_offset, row_width, row_height);
 
-    draw_row(&keyboard::R4_1, state, rect_0, frame);
-    draw_row(&keyboard::R3, state, rect_1, frame);
-    draw_row(&keyboard::R2, state, rect_2, frame);
-    draw_row(&keyboard::R1_0, state, rect_3, frame);
-    draw_row(&keyboard::R1_1, state, rect_4, frame);
+        draw_row(row, state, rect, frame)
+    }
+
+    //let rect_0 = Rect::new(0, 0, terminal_size.width, row_height);
+    //let rect_1 = Rect::new(0, row_height, terminal_size.width, row_height);
+    //let rect_2 = Rect::new(0, row_height * 2, terminal_size.width, row_height);
+    //let rect_3 = Rect::new(0, row_height * 3, terminal_size.width, row_height);
+    //let rect_4 = Rect::new(0, row_height * 4, terminal_size.width, row_height);
+    //let rect_5 = Rect::new(0, row_height * 5, terminal_size.width, row_height);
+
+    //draw_row(&keyboard::R4_1, state, rect_0, frame);
+    //draw_row(&keyboard::R3, state, rect_1, frame);
+    //draw_row(&keyboard::R2, state, rect_2, frame);
+    //draw_row(&keyboard::R1_0, state, rect_3, frame);
+    //draw_row(&keyboard::R1_1, state, rect_4, frame);
 }
 
 fn draw_row<B: Backend>(row_keys: &[KeyUI], state: &App, rect: Rect, frame: &mut Frame<B>) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
-        .constraints(make_row_constraints(row_keys).as_ref())
+        .constraints(make_row_constraints_static(row_keys).as_ref())
         .split(rect);
 
     for (pos, ui_key) in row_keys.iter().enumerate() {
