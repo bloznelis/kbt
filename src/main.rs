@@ -44,6 +44,17 @@ pub enum KeySize {
     U675,
 }
 
+// 1 terminal cell = 0.2u
+
+//  1u (len = 5)
+// ┏━━━┓
+// ┃ A ┃
+// ┗━━━┛
+
+//  2u (len = 10)
+// ┏━━━━━━━━┓
+// ┃  |<-   ┃
+// ┗━━━━━━━━┛
 impl KeySize {
     fn static_len(&self) -> u16 {
         match self {
@@ -58,30 +69,6 @@ impl KeySize {
         }
     }
 }
-
-// https://support.wasdkeyboards.com/hc/en-us/articles/115009701328-Keycap-Size-Compatibility
-// some shitty mafs
-// 60% one row has 15u
-// 1u key takes up
-// 100 -> 15u
-// x -> 1u
-// -------
-// x = 100 / 15
-// x ~= 6.66666
-//////////////////
-// 100 -> 15
-// x -> 2u
-// -------
-// x ~= 13.333333
-//fn calc_percentage(key: &KeyUI) -> u16 {
-//((100 as f32 * key.size) / 15 as f32) as u16
-//}
-
-//fn make_row_constraints(keys: &[KeyUI]) -> Vec<Constraint> {
-//keys.iter()
-//.map(|key| Constraint::Percentage(calc_percentage(&key)))
-//.collect()
-//}
 
 fn make_row_constraints_static(keys: &[KeyUI]) -> Vec<Constraint> {
     keys.iter()
@@ -201,29 +188,23 @@ fn run<B: Backend>(terminal: &mut Terminal<B>, mut state: App) -> io::Result<()>
     }
 }
 
-// 1 terminal cell = 0.2u
-
-//  1u (len = 5)
-// ┏━━━┓
-// ┃ A ┃
-// ┗━━━┛
-
-//  2u (len = 10)
-// ┏━━━━━━━━┓
-// ┃  |<-   ┃
-// ┗━━━━━━━━┛
-
 fn calc_static_row_len(row_keys: &[KeyUI]) -> u16 {
     row_keys.iter().map(|key| key.size.static_len() + key.size_correction.unwrap_or(0)).sum()
 }
 
 fn view<B: Backend>(frame: &mut Frame<B>, state: &App) {
     let terminal_size: Rect = frame.size();
-    //let row_height = terminal_size.height / 5;
-    let row_height: u16 = 3;
-    let left_padding: u16 = 10; // Should be dynamic based on screen size
-    let top_padding: u16 = 20; // Should be dynamic based on screen size
+
     let rows: Vec<&[KeyUI]> = vec![&R4_1, &R3, &R2, &R1_0, &R1_1];
+    let rows_count: u16 = 5;
+    // 60% layout:
+    // width = 75 cells
+    // height = 15 cells
+    let row_height: u16 = 3;
+    let layout_height: u16 = 3 * rows_count;
+    let layout_width: u16 = 75;
+    let left_padding: u16 = (terminal_size.width / 2) - (layout_width / 2);
+    let top_padding: u16 = (terminal_size.height / 2) - (layout_height / 2);
 
     for (idx, row) in rows.iter().enumerate() {
         let idx: u16 = u16::try_from(idx).unwrap();
@@ -233,19 +214,6 @@ fn view<B: Backend>(frame: &mut Frame<B>, state: &App) {
 
         draw_row(row, state, rect, frame)
     }
-
-    //let rect_0 = Rect::new(0, 0, terminal_size.width, row_height);
-    //let rect_1 = Rect::new(0, row_height, terminal_size.width, row_height);
-    //let rect_2 = Rect::new(0, row_height * 2, terminal_size.width, row_height);
-    //let rect_3 = Rect::new(0, row_height * 3, terminal_size.width, row_height);
-    //let rect_4 = Rect::new(0, row_height * 4, terminal_size.width, row_height);
-    //let rect_5 = Rect::new(0, row_height * 5, terminal_size.width, row_height);
-
-    //draw_row(&keyboard::R4_1, state, rect_0, frame);
-    //draw_row(&keyboard::R3, state, rect_1, frame);
-    //draw_row(&keyboard::R2, state, rect_2, frame);
-    //draw_row(&keyboard::R1_0, state, rect_3, frame);
-    //draw_row(&keyboard::R1_1, state, rect_4, frame);
 }
 
 fn draw_row<B: Backend>(row_keys: &[KeyUI], state: &App, rect: Rect, frame: &mut Frame<B>) {
