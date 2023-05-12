@@ -2,7 +2,7 @@ use crate::{key::Key, KeyUI, KeySize};
 
 pub const R4_1: [KeyUI; 14] = [
     KeyUI {
-        key: Key::Grave,
+        key: Key::Esc,
         size: KeySize::U1,
         size_correction: None,
     },

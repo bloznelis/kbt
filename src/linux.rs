@@ -90,6 +90,7 @@ fn find_active_window(
 impl From<u8> for Key {
     fn from(value: u8) -> Self {
         match value {
+            9 => Key::Esc,
             10 => Key::One,
             11 => Key::Two,
             12 => Key::Three,

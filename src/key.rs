@@ -54,6 +54,7 @@ pub enum Key {
     Period,
     QuestionMark,
     // modifiers
+    Esc,
     Tab,
     CapsLock,
     LeftShift,
@@ -74,7 +75,17 @@ pub enum Key {
 impl fmt::Display for Key {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
+            Key::CapsLock => write!(f, "Caps"),
+            Key::Backspace => write!(f, "|<-"),
+            Key::LeftShift => write!(f, "Shift"),
+            Key::LeftCtrl => write!(f, "Ctrl"),
+            Key::LeftSuper => write!(f, "Super"),
+            Key::LeftAlt => write!(f, "Alt"),
             Key::LeftBracket => write!(f, "{{["),
+            Key::RightShift => write!(f, "Shift"),
+            Key::RightCtrl => write!(f, "Ctrl"),
+            Key::RightSuper => write!(f, "Super"),
+            Key::RightAlt => write!(f, "Alt"),
             Key::RightBracket => write!(f, "}}]"),
             Key::Backslash => write!(f, "|\\"),
             Key::SemiColon => write!(f, ":;"),
