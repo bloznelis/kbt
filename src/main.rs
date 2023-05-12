@@ -30,7 +30,7 @@ use tui::{
 pub struct KeyUI {
     key: Key,
     size: KeySize,
-    size_correction: Option<u16> // To make layout look consistent
+    size_correction: Option<u16>, // To make layout look consistent
 }
 
 pub enum KeySize {
@@ -189,7 +189,10 @@ fn run<B: Backend>(terminal: &mut Terminal<B>, mut state: App) -> io::Result<()>
 }
 
 fn calc_static_row_len(row_keys: &[KeyUI]) -> u16 {
-    row_keys.iter().map(|key| key.size.static_len() + key.size_correction.unwrap_or(0)).sum()
+    row_keys
+        .iter()
+        .map(|key| key.size.static_len() + key.size_correction.unwrap_or(0))
+        .sum()
 }
 
 fn view<B: Backend>(frame: &mut Frame<B>, state: &App) {
