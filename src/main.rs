@@ -1,6 +1,6 @@
 mod backend;
 mod key;
-mod keyboard;
+mod keyboard60;
 mod linux;
 
 use std::{
@@ -17,7 +17,7 @@ use crossterm::{
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
 use key::Key;
-use keyboard::*;
+use keyboard60::*;
 use linux::X11;
 use tui::{
     backend::{Backend, CrosstermBackend},
@@ -198,7 +198,7 @@ fn calc_static_row_len(row_keys: &[KeyUI]) -> u16 {
 fn view<B: Backend>(frame: &mut Frame<B>, state: &App) {
     let terminal_size: Rect = frame.size();
 
-    let rows: Vec<&[KeyUI]> = vec![&R4_1, &R3, &R2, &R1_0, &R1_1];
+    let rows: Vec<&[KeyUI]> = vec![&R4, &R3, &R2, &R1, &R0];
     let rows_count: u16 = 5;
     // 60% layout:
     // width = 75 cells
