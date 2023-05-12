@@ -3,12 +3,14 @@ mod key;
 mod keyboard60;
 mod keyboard80;
 mod linux;
+mod menu;
 
 use std::{
     collections::HashMap,
+    fmt::Display,
     io,
     sync::mpsc::{channel, Receiver, Sender},
-    thread, vec,
+    thread,
 };
 
 use backend::KeyBackend;
@@ -104,9 +106,19 @@ enum AppEvent {
     ControlEvent(ControlEventType),
 }
 
-enum KeyboardSize {
+#[derive(Clone)]
+pub enum KeyboardSize {
     Keyboard60,
     Keyboard80,
+}
+
+impl Display for KeyboardSize {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            KeyboardSize::Keyboard60 => write!(f, "60% layout"),
+            KeyboardSize::Keyboard80 => write!(f, "80% layout"),
+        }
+    }
 }
 
 struct App {
@@ -129,17 +141,19 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     terminal.clear()?;
 
-    let (sender, receiver): (Sender<AppEvent>, Receiver<AppEvent>) = channel();
-    X11.subscribe(sender.clone())?;
-    thread::spawn(move || listen_for_control(sender).unwrap());
+    let selection = menu::run_menu(&mut terminal).and_then(|selection| {
+        let (sender, receiver): (Sender<AppEvent>, Receiver<AppEvent>) = channel();
+        X11.subscribe(sender.clone());
+        thread::spawn(move || listen_for_control(sender).unwrap());
 
-    let initial_app = App {
-        key_states: HashMap::new(),
-        event_receiver: receiver,
-        keyboard_size: KeyboardSize::Keyboard80,
-    };
+        let initial_app = App {
+            key_states: HashMap::new(),
+            event_receiver: receiver,
+            keyboard_size: selection,
+        };
 
-    let result = run(&mut terminal, initial_app);
+        run(&mut terminal, initial_app)
+    });
 
     // restore terminal
     disable_raw_mode()?;
@@ -211,11 +225,18 @@ fn calc_static_row_len(row_keys: &[KeyUI]) -> u16 {
         .sum()
 }
 
+fn view<B: Backend>(frame: &mut Frame<B>, state: &App) {
+    match state.keyboard_size {
+        KeyboardSize::Keyboard80 => draw_80(frame, state),
+        KeyboardSize::Keyboard60 => draw_60(frame, state),
+    }
+}
+
 fn draw_80<B: Backend>(frame: &mut Frame<B>, state: &App) {
     let terminal_size: Rect = frame.size();
 
     let rows = keyboard80::ROWS;
-    let rows_count: u16 = 5;
+    let rows_count: u16 = 6;
 
     let row_height: u16 = 3;
     let layout_height: u16 = 3 * rows_count;
@@ -254,13 +275,6 @@ fn draw_60<B: Backend>(frame: &mut Frame<B>, state: &App) {
         let rect = Rect::new(left_padding, y_offset, row_width, row_height);
 
         draw_row(row, state, rect, frame)
-    }
-}
-
-fn view<B: Backend>(frame: &mut Frame<B>, state: &App) {
-    match state.keyboard_size {
-        KeyboardSize::Keyboard80 => draw_80(frame, state),
-        KeyboardSize::Keyboard60 => draw_60(frame, state),
     }
 }
 
