@@ -1,6 +1,7 @@
 mod backend;
 mod key;
 mod keyboard60;
+mod keyboard80;
 mod linux;
 
 use std::{
@@ -17,7 +18,6 @@ use crossterm::{
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
 use key::Key;
-use keyboard60::*;
 use linux::X11;
 use tui::{
     backend::{Backend, CrosstermBackend},
@@ -30,10 +30,11 @@ use tui::{
 pub struct KeyUI {
     key: Key,
     size: KeySize,
-    size_correction: Option<u16>, // To make layout look consistent
+    size_correction: Option<i16>, // To make layout look consistent
 }
 
 pub enum KeySize {
+    U05,
     U1,
     U15,
     U175,
@@ -56,8 +57,9 @@ pub enum KeySize {
 // ┃  |<-   ┃
 // ┗━━━━━━━━┛
 impl KeySize {
-    fn static_len(&self) -> u16 {
+    fn static_len(&self) -> i16 {
         match self {
+            KeySize::U05 => 2,
             KeySize::U1 => 5,
             KeySize::U15 => 7,
             KeySize::U175 => 8,
@@ -72,7 +74,12 @@ impl KeySize {
 
 fn make_row_constraints_static(keys: &[KeyUI]) -> Vec<Constraint> {
     keys.iter()
-        .map(|key| Constraint::Length(key.size.static_len() + key.size_correction.unwrap_or(0)))
+        .map(|key| {
+            Constraint::Length(
+                u16::try_from(key.size.static_len() + key.size_correction.unwrap_or(0))
+                    .unwrap_or(0),
+            )
+        })
         .collect()
 }
 
@@ -97,9 +104,15 @@ enum AppEvent {
     ControlEvent(ControlEventType),
 }
 
+enum KeyboardSize {
+    Keyboard60,
+    Keyboard80,
+}
+
 struct App {
     key_states: HashMap<Key, KeyState>,
     event_receiver: Receiver<AppEvent>,
+    keyboard_size: KeyboardSize,
 }
 
 impl App {
@@ -123,6 +136,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let initial_app = App {
         key_states: HashMap::new(),
         event_receiver: receiver,
+        keyboard_size: KeyboardSize::Keyboard80,
     };
 
     let result = run(&mut terminal, initial_app);
@@ -191,14 +205,38 @@ fn run<B: Backend>(terminal: &mut Terminal<B>, mut state: App) -> io::Result<()>
 fn calc_static_row_len(row_keys: &[KeyUI]) -> u16 {
     row_keys
         .iter()
-        .map(|key| key.size.static_len() + key.size_correction.unwrap_or(0))
+        .map(|key| {
+            u16::try_from(key.size.static_len() + key.size_correction.unwrap_or(0)).unwrap_or(0)
+        })
         .sum()
 }
 
-fn view<B: Backend>(frame: &mut Frame<B>, state: &App) {
+fn draw_80<B: Backend>(frame: &mut Frame<B>, state: &App) {
     let terminal_size: Rect = frame.size();
 
-    let rows: Vec<&[KeyUI]> = vec![&R4, &R3, &R2, &R1, &R0];
+    let rows = keyboard80::ROWS;
+    let rows_count: u16 = 5;
+
+    let row_height: u16 = 3;
+    let layout_height: u16 = 3 * rows_count;
+    let layout_width: u16 = 100;
+    let left_padding: u16 = (terminal_size.width / 2) - (layout_width / 2);
+    let top_padding: u16 = (terminal_size.height / 2) - (layout_height / 2);
+
+    for (idx, row) in rows.iter().enumerate() {
+        let idx: u16 = u16::try_from(idx).unwrap();
+        let row_width: u16 = calc_static_row_len(row);
+        let y_offset: u16 = (row_height * idx) + top_padding;
+        let rect = Rect::new(left_padding, y_offset, row_width, row_height);
+
+        draw_row(row, state, rect, frame)
+    }
+}
+
+fn draw_60<B: Backend>(frame: &mut Frame<B>, state: &App) {
+    let terminal_size: Rect = frame.size();
+
+    let rows = keyboard60::ROWS;
     let rows_count: u16 = 5;
     // 60% layout:
     // width = 75 cells
@@ -219,6 +257,13 @@ fn view<B: Backend>(frame: &mut Frame<B>, state: &App) {
     }
 }
 
+fn view<B: Backend>(frame: &mut Frame<B>, state: &App) {
+    match state.keyboard_size {
+        KeyboardSize::Keyboard80 => draw_80(frame, state),
+        KeyboardSize::Keyboard60 => draw_60(frame, state),
+    }
+}
+
 fn draw_row<B: Backend>(row_keys: &[KeyUI], state: &App, rect: Rect, frame: &mut Frame<B>) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
@@ -230,6 +275,11 @@ fn draw_row<B: Backend>(row_keys: &[KeyUI], state: &App, rect: Rect, frame: &mut
             .key_states
             .get(&ui_key.key)
             .unwrap_or(&KeyState::Untouched);
+
+        let borders = match ui_key.key {
+            Key::Separator => Borders::NONE,
+            _ => Borders::ALL,
+        };
 
         let border_type = match key_state {
             KeyState::Pressed => BorderType::Double,
@@ -245,9 +295,7 @@ fn draw_row<B: Backend>(row_keys: &[KeyUI], state: &App, rect: Rect, frame: &mut
             KeyState::Untouched => Style::default(),
         };
 
-        let block = Block::default()
-            .borders(Borders::ALL)
-            .border_type(border_type);
+        let block = Block::default().borders(borders).border_type(border_type);
 
         let text = Paragraph::new(ui_key.key.to_string())
             .block(block)

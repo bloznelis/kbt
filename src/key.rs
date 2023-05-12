@@ -29,7 +29,7 @@ pub enum Key {
     N,
     M,
 
-    // Numbers
+    // numbers
     One,
     Two,
     Three,
@@ -41,7 +41,7 @@ pub enum Key {
     Nine,
     Zero,
 
-    // Symbols
+    // symbols
     Grave,
     Hyphen,
     Plus,
@@ -53,6 +53,7 @@ pub enum Key {
     Comma,
     Period,
     QuestionMark,
+
     // modifiers
     Esc,
     Tab,
@@ -68,6 +69,38 @@ pub enum Key {
     RightShift,
     Return,
     Backspace,
+    Insert,
+    Home,
+    PgUp,
+    Delete,
+    End,
+    PgDown,
+
+    // arrows
+    ArrowUp,
+    ArrowDown,
+    ArrowLeft,
+    ArrowRight,
+
+    // F keys
+    F1,
+    F2,
+    F3,
+    F4,
+    F5,
+    F6,
+    F7,
+    F8,
+    F9,
+    F10,
+    F11,
+    F12,
+
+    // misc
+    Separator,
+    PrintScreen,
+    ScrollLock,
+    PauseBreak,
 
     Unknown,
 }
@@ -76,7 +109,7 @@ impl fmt::Display for Key {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             Key::CapsLock => write!(f, "Caps"),
-            Key::Backspace => write!(f, "|<-"),
+            Key::Backspace => write!(f, "Back"),
             Key::LeftShift => write!(f, "Shift"),
             Key::LeftCtrl => write!(f, "Ctrl"),
             Key::LeftSuper => write!(f, "Super"),
@@ -106,6 +139,14 @@ impl fmt::Display for Key {
             Key::Hyphen => write!(f, "-"),
             Key::Plus => write!(f, "+"),
             Key::Grave => write!(f, "~`"),
+            Key::ArrowUp => write!(f, "↑"),
+            Key::ArrowDown => write!(f, "↓"),
+            Key::ArrowLeft => write!(f, "←"),
+            Key::ArrowRight => write!(f, "→"),
+            Key::PauseBreak => write!(f, "P/B"),
+            Key::PrintScreen => write!(f, "Prn"),
+            Key::ScrollLock => write!(f, "Lck"),
+            Key::Separator => write!(f, ""),
             _ => write!(f, "{:?}", self),
         }
     }
