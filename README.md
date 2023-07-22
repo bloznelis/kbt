@@ -19,14 +19,9 @@ I got tired with semi-broken online keyboard testers, so here we go – a more s
 ## Installation
 ### Package managers
 **TBA**
-### Manual
+### Building from source
   1. `cargo build --release`
   2. `cp target/release/<your-application> /usr/local/bin/`
-
-### Building from source
-  1. Checkout the code
-  2. `make build`
-  3. `./execs/typioca`
 
 #### Prerequisites
   * `rust`
