@@ -10,6 +10,9 @@
   * Multiple keyboard layouts
   * Interactive menu
 
+## Limitations
+* Only supports Linux running Xorg
+
 ## Installation
 ### Package managers
 **TBA**
