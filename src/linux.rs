@@ -1,7 +1,7 @@
-use std::sync::mpsc::{channel, Receiver, Sender};
+use std::sync::mpsc::Sender;
 use std::thread;
 
-use crate::{AppEvent, Key};
+use crate::{AppEvent, KbtError, Key};
 use crate::{KeyBackend, KeyEventType};
 use x11rb::connection::Connection;
 use x11rb::protocol::{xproto::*, Event};
@@ -10,8 +10,12 @@ use x11rb::rust_connection::RustConnection;
 pub struct X11;
 
 impl KeyBackend for X11 {
-    fn subscribe(&self, sender: Sender<AppEvent>) -> Result<(), Box<dyn std::error::Error>> {
-        thread::spawn(move || listen_for_keypresses(sender).unwrap());
+    fn subscribe(&self, sender: Sender<AppEvent>) -> Result<(), KbtError> {
+        thread::spawn(move || {
+            listen_for_keypresses(sender).map_err(|err| KbtError {
+                message: format!("keypress listener fork died msg={}", err.to_string()),
+            })
+        });
 
         Ok(())
     }

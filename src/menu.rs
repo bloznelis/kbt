@@ -1,8 +1,6 @@
-use std::io;
-
 use crossterm::{
     event::{self, Event, KeyCode, KeyModifiers},
-    terminal::enable_raw_mode
+    terminal::enable_raw_mode,
 };
 use tui::{
     backend::Backend,
@@ -12,7 +10,7 @@ use tui::{
     Frame, Terminal,
 };
 
-use crate::KeyboardSize;
+use crate::{KbtError, KeyboardSize, MenuResult};
 
 struct MenuState {
     selections: Vec<KeyboardSize>,
@@ -28,15 +26,10 @@ impl Default for MenuState {
     }
 }
 
-pub fn run_menu<B: Backend>(
-    terminal: &mut Terminal<B>,
-) -> io::Result<KeyboardSize> {
-    enable_raw_mode();
+pub fn run_menu<B: Backend>(terminal: &mut Terminal<B>) -> Result<MenuResult, KbtError> {
+    enable_raw_mode()?;
     let mut state = MenuState::default();
     let max_selection_idx = state.selections.len() - 1;
-
-
-    //panic!("{:?}", max_selection_idx);
 
     loop {
         terminal.draw(|f| view_menu(f, &state))?;
@@ -49,11 +42,15 @@ pub fn run_menu<B: Backend>(
                 KeyCode::Down | KeyCode::Char('j') => {
                     state.cursor = std::cmp::min(max_selection_idx, state.cursor + 1)
                 }
-                KeyCode::Enter => return Ok(state.selections.get(state.cursor).unwrap().clone()),
-                //todo: unify errors and return exit here
-                //KeyCode::Char('c') => match key.modifiers {
-                    //KeyModifiers::CONTROL => 
-                //}
+                KeyCode::Enter => {
+                    return Ok(MenuResult::KeyboardSelected(
+                        state.selections.get(state.cursor).unwrap().clone(),
+                    ))
+                }
+                KeyCode::Char('c') => match key.modifiers {
+                    KeyModifiers::CONTROL => return Ok(MenuResult::Terminate),
+                    _ => {}
+                },
                 _ => {}
             }
         }
