@@ -3,7 +3,7 @@
 
 > **k**bt **b**oard **t**ester
 
-![image](https://github.com/bloznelis/kbtest/assets/33397865/ab7621df-6b01-4549-8bce-86e9a3276f9a)
+![image](https://github.com/bloznelis/kbt/assets/33397865/cfcc78ab-37f0-4db0-a107-9a21fa283f99)
 
 ## Features
   * Caputres key presses directly from X server
