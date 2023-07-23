@@ -30,7 +30,15 @@ use ratatui::{
 };
 use view::show_to_small_dialog;
 
+use clap::Parser;
+
+#[derive(Parser, Debug)]
+#[command(version)]
+struct Args {}
+
 fn main() -> Result<(), KbtError> {
+    let _ = Args::parse();
+
     run().map(|_| println!("bye!"))
 }
 
