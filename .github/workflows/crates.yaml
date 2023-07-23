@@ -1,0 +1,17 @@
+name: Crates.io release
+
+on:
+  push:
+    tags: "*"
+
+jobs:
+  crates:
+    name: Release
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+    steps:
+      - uses: actions/checkout@v3
+      - name: Cargo publish
+        run: cargo publish 
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
