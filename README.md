@@ -22,7 +22,7 @@ I got tired with semi-broken online keyboard testers, so here we go – one on a
 
 ### Building from source
   1. `cargo build --release`
-  2. `cp target/release/<your-application> /usr/local/bin/`
+  2. `cp target/release/kbt /usr/local/bin/`
 
 #### Prerequisites
   * `rust`
