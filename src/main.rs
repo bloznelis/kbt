@@ -21,7 +21,7 @@ use crossterm::{
 };
 use key::Key;
 use linux::X11;
-use tui::{
+use ratatui::{
     backend::{Backend, CrosstermBackend},
     layout::{Alignment, Constraint, Direction, Layout, Rect},
     style::{Color, Modifier, Style},
@@ -197,10 +197,7 @@ fn main() -> Result<(), KbtError> {
 
     // restore terminal
     disable_raw_mode()?;
-    execute!(
-        terminal.backend_mut(),
-        LeaveAlternateScreen,
-    )?;
+    execute!(terminal.backend_mut(), LeaveAlternateScreen,)?;
     terminal.show_cursor()?;
 
     println!("bye!");
@@ -241,7 +238,10 @@ fn run<B: Backend>(terminal: &mut Terminal<B>, mut state: App) -> Result<(), Kbt
                 state.key_states.insert(key, KeyState::Pressed);
             }
             AppEvent::KeyEvent(KeyEventType::KeyReleased(key)) => {
-                state.key_states.insert(key, KeyState::Released);
+                if let Some(KeyState::Pressed) = state.key_states.get(&key) {
+                    state.key_states.insert(key, KeyState::Released);
+                    {}
+                }
             }
             AppEvent::ControlEvent(control) => match control {
                 ControlEventType::Terminate => {
@@ -345,10 +345,15 @@ fn draw_80<B: Backend>(frame: &mut Frame<B>, state: &App) {
         draw_row(row, state, rect, frame)
     }
 
-    if state.key_states.values().filter(|a| matches!(a, KeyState::Released | KeyState::Pressed)).count() < 5 {
+    if state
+        .key_states
+        .values()
+        .filter(|a| matches!(a, KeyState::Released | KeyState::Pressed))
+        .count()
+        < 5
+    {
         draw_help(top_padding + (row_height * rows_count) + 3, frame);
     }
-
 }
 
 fn draw_60<B: Backend>(frame: &mut Frame<B>, state: &App) {
@@ -374,7 +379,13 @@ fn draw_60<B: Backend>(frame: &mut Frame<B>, state: &App) {
         draw_row(row, state, rect, frame)
     }
 
-    if state.key_states.values().filter(|a| matches!(a, KeyState::Released | KeyState::Pressed)).count() < 5 {
+    if state
+        .key_states
+        .values()
+        .filter(|a| matches!(a, KeyState::Released | KeyState::Pressed))
+        .count()
+        < 5
+    {
         draw_help(top_padding + (row_height * rows_count) + 3, frame);
     }
 }
@@ -431,11 +442,8 @@ fn draw_help<B: Backend>(y_offset: u16, frame: &mut Frame<B>) {
 
     let rect = Rect::new(x_offset, y_offset, message_len, message_height);
 
-    let help = Paragraph::new(message).style(
-        Style::default()
-            .fg(Color::Gray)
-            .add_modifier(Modifier::DIM)
-    );
+    let help =
+        Paragraph::new(message).style(Style::default().fg(Color::Gray).add_modifier(Modifier::DIM));
 
     frame.render_widget(help, rect);
 }

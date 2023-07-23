@@ -2,7 +2,7 @@ use crossterm::{
     event::{self, Event, KeyCode, KeyModifiers},
     terminal::enable_raw_mode,
 };
-use tui::{
+use ratatui::{
     backend::Backend,
     layout::{Constraint, Direction, Layout, Rect},
     style::{Color, Modifier, Style},
@@ -86,7 +86,7 @@ fn view_menu<B: Backend>(frame: &mut Frame<B>, state: &MenuState) {
 
     let rect = Rect::new(left_padding, top_padding, layout_width, layout_height);
 
-    let layout_chunks: Vec<Rect> = Layout::default()
+    let layout_chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints([Constraint::Length(2), Constraint::Length(2)].as_ref())
         .split(rect);
