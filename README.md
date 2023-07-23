@@ -26,4 +26,4 @@ I got tired with semi-broken online keyboard testers, so here we go – one on a
   * `rust`
 
 ### Acknowledgments
-Built with [tui-rs](https://github.com/fdehau/tui-rs)
+Built with [ratatui](https://github.com/ratatui-org/ratatui)
