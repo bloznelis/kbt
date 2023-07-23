@@ -1,7 +1,6 @@
 <h1 align=center> kbt </h1>
-<p align=center> Terminal based keyboard tester </p>
 
-> **k**bt **b**oard **t**ester
+<p align=center> (<b>k</b>bt <b>b</b>oard <b>t</b>ester)* </p>
 
 ![image](https://github.com/bloznelis/kbt/assets/33397865/cfcc78ab-37f0-4db0-a107-9a21fa283f99)
 
