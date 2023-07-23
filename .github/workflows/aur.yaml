@@ -1,0 +1,19 @@
+name: AUR release
+
+on:
+  push:
+    tags: "*"
+
+jobs:
+  aur:
+    name: Bump AUR version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.AUR_SSH_KEY }}
+          known_hosts: unnecessary
+      - name: Push to AUR
+        run: .github/aur/publish.sh ${{ github.ref_name }}
