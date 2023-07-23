@@ -143,14 +143,14 @@ enum SizeCheckResult {
 fn check_if_fits(terminal_size: Rect, state: &App) -> SizeCheckResult {
     match state.keyboard_size {
         KeyboardSize::Keyboard60 => {
-            if terminal_size.width > 80 && terminal_size.height > 20 {
+            if terminal_size.width > 80 && terminal_size.height > 22 {
                 SizeCheckResult::Fits
             } else {
                 SizeCheckResult::TooSmall
             }
         }
         KeyboardSize::Keyboard80 => {
-            if terminal_size.width > 93 && terminal_size.height > 22 {
+            if terminal_size.width > 93 && terminal_size.height > 24 {
                 SizeCheckResult::Fits
             } else {
                 SizeCheckResult::TooSmall
