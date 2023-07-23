@@ -20,8 +20,13 @@ I got tired with semi-broken online keyboard testers, so here we go – one on a
 ### AUR
 `paru -S kbt`
 
+### Cargo
+`cargo install kbt`
+
+**note**: Default location of the installed binary is `$HOME/.cargo/bin`
+
 ### Building from source
-  1. `cargo build --release`
+  1. `make build`
   2. `cp target/release/kbt /usr/local/bin/`
 
 #### Prerequisites
