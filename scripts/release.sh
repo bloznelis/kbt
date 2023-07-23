@@ -22,7 +22,6 @@ then
   increment_part=$(gum choose "minor" "patch" "major" --header "Choose update type:")
 
   new_tag=$(increment_version $current_tag $increment_part)
-  release_branch=release-${new_tag%.*}
 
   gum confirm "Old tag: $current_tag | new tag: $new_tag" \
     && sed -i "s|version = \"[0-9.]*\"$|version = \"$new_tag\"|" Cargo.toml \
