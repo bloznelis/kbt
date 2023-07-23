@@ -1,6 +1,7 @@
 <h1 align=center> kbt </h1>
 
 <p align=center> (<b>k</b>bt <b>b</b>oard <b>t</b>ester)* </p>
+<p align=center> <img alt="GitHub release (latest SemVer)" src="https://img.shields.io/github/v/release/bloznelis/kbt"> <img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/bloznelis/kbt/ci.yaml"> </p>
 
 ![image](https://github.com/bloznelis/kbt/assets/33397865/cfcc78ab-37f0-4db0-a107-9a21fa283f99)
 
