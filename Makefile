@@ -6,6 +6,9 @@ VERSION     = $(shell git describe --abbrev=0 --tags)
 
 default: help
 
+check: ## Checks the source
+	@cargo check --release
+
 build:  ## Builds the binary
 	@cargo build --release
 
