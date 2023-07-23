@@ -47,7 +47,7 @@ pub fn run_menu<B: Backend>(terminal: &mut Terminal<B>) -> Result<MenuResult, Kb
                         state.selections.get(state.cursor).unwrap().clone(),
                     ))
                 }
-                KeyCode::Char('c') => match key.modifiers {
+                KeyCode::Char('c') | KeyCode::Char('q') => match key.modifiers {
                     KeyModifiers::CONTROL => return Ok(MenuResult::Terminate),
                     _ => {}
                 },

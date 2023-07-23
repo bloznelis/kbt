@@ -31,17 +31,22 @@ use ratatui::{
 use view::show_to_small_dialog;
 
 fn main() -> Result<(), KbtError> {
+    run().map(|_| println!("bye!"))
+}
+
+fn run() -> Result<(), KbtError> {
     let mut stdout = io::stdout();
+
     execute!(stdout, EnterAlternateScreen, DisableMouseCapture)?;
+    enable_raw_mode()?;
+
     let backend = CrosstermBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
-
-    terminal.clear()?;
 
     let menu_result: MenuResult = menu::run_menu(&mut terminal)?;
 
     match menu_result {
-        MenuResult::Terminate => return Ok(()),
+        MenuResult::Terminate => Ok(()),
         MenuResult::KeyboardSelected(selection) => {
             let (sender, receiver): (Sender<AppEvent>, Receiver<AppEvent>) = channel();
             X11.subscribe(sender.clone())?;
@@ -53,16 +58,15 @@ fn main() -> Result<(), KbtError> {
                 keyboard_size: selection,
             };
 
-            run(&mut terminal, initial_app)
+            run_keyboard(&mut terminal, initial_app)
         }
     }?;
 
     // restore terminal
     disable_raw_mode()?;
-    execute!(terminal.backend_mut(), LeaveAlternateScreen,)?;
+    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
     terminal.show_cursor()?;
 
-    println!("bye!");
     Ok(())
 }
 
@@ -90,9 +94,7 @@ fn listen_for_control(sender: Sender<AppEvent>) -> Result<(), KbtError> {
     }
 }
 
-fn run<B: Backend>(terminal: &mut Terminal<B>, mut state: App) -> Result<(), KbtError> {
-    enable_raw_mode()?;
-
+fn run_keyboard<B: Backend>(terminal: &mut Terminal<B>, mut state: App) -> Result<(), KbtError> {
     loop {
         let app_event = state.event_receiver.recv().unwrap();
         match app_event {
