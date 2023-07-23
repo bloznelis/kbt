@@ -25,7 +25,7 @@ then
   release_branch=release-${new_tag%.*}
 
   gum confirm "Old tag: $current_tag | new tag: $new_tag" \
-    && sed -i "s|version = \"[0-9.]*\"$|version = $new_tag|" Cargo.toml \
+    && sed -i "s|version = \"[0-9.]*\"$|version = \"$new_tag\"|" Cargo.toml \
     && git add Cargo.toml && git commit -m "Release kbt $new_tag" \
     && git tag -a $new_tag -m "kbt $new_tag" \
     && gum spin --show-output --title="Pushing master" git push \
