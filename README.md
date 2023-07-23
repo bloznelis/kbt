@@ -25,6 +25,9 @@ I got tired with semi-broken online keyboard testers, so here we go – one on a
 
 **note**: Default location of the installed binary is `$HOME/.cargo/bin`
 
+### Prebuilt binaries
+You can grab built binary from the latest [release](https://github.com/bloznelis/kbt/releases) (only linux-x86_64)
+
 ### Building from source
   1. `make build`
   2. `cp target/release/kbt /usr/local/bin/`
