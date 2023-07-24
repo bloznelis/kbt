@@ -104,6 +104,13 @@ fn listen_for_control(sender: Sender<AppEvent>) -> Result<(), KbtError> {
 
 fn run_keyboard<B: Backend>(terminal: &mut Terminal<B>, mut state: App) -> Result<(), KbtError> {
     loop {
+        let does_fit = check_if_fits(terminal.size()?, &state);
+
+        match does_fit {
+            SizeCheckResult::Fits => terminal.draw(|f| view::draw(f, &state)),
+            SizeCheckResult::TooSmall => terminal.draw(|f| show_to_small_dialog(f)),
+        }?;
+
         let app_event = state.event_receiver.recv().unwrap();
         match app_event {
             AppEvent::KeyEvent(KeyEventType::KeyPressed(key)) => {
@@ -125,13 +132,6 @@ fn run_keyboard<B: Backend>(terminal: &mut Terminal<B>, mut state: App) -> Resul
             },
             AppEvent::ScreenResize => {}
         }
-
-        let does_fit = check_if_fits(terminal.size()?, &state);
-
-        match does_fit {
-            SizeCheckResult::Fits => terminal.draw(|f| view::draw(f, &state)),
-            SizeCheckResult::TooSmall => terminal.draw(|f| show_to_small_dialog(f)),
-        }?;
     }
 }
 
