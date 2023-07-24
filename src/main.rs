@@ -20,7 +20,6 @@ use crossterm::{
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
-use key::Key;
 use linux::X11;
 use model::*;
 use ratatui::{
@@ -37,6 +36,8 @@ use clap::Parser;
 struct Args {}
 
 fn main() -> Result<(), KbtError> {
+    // simple_logging::log_to_file("kbt.log", LevelFilter::Info)?;
+    log::info!("start the app!");
     let _ = Args::parse();
 
     run().map(|_| println!("bye!"))
@@ -57,7 +58,7 @@ fn run() -> Result<(), KbtError> {
         MenuResult::Terminate => Ok(()),
         MenuResult::KeyboardSelected(selection) => {
             let (sender, receiver): (Sender<AppEvent>, Receiver<AppEvent>) = channel();
-            X11.subscribe(sender.clone())?;
+            X11.subscribe(sender.clone()).unwrap();
             thread::spawn(move || listen_for_control(sender).unwrap());
 
             let initial_app = App {
