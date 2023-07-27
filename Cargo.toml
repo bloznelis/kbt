@@ -1,15 +1,19 @@
 [package]
 name = "kbt"
 version = "1.0.0"
+authors = ["bloznelis <lukas.bloznelis@gmail.com>"]
 description = "Keyboard tester in terminal"
 license = "MIT"
 homepage = "https://github.com/bloznelis/kbt"
+repository = "https://github.com/bloznelis/kbt"
 edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+keywords = ["terminal", "keyboard", "tester", "tui"]
+readme = "README.md"
 
 [dependencies]
-x11rb = "0.11.1"
+device_query_revamped = "2.0.0"
 ratatui = { version = "0.22.0", features = ["all-widgets"]}
 crossterm = "0.25"
 clap = { version = "4.3.19", features = ["derive"] }
+simple-logging = "2.0.2"
+log = "0.4.19"

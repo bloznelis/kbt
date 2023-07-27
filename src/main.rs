@@ -20,7 +20,6 @@ use crossterm::{
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
-use key::Key;
 use linux::X11;
 use model::*;
 use ratatui::{
@@ -37,6 +36,8 @@ use clap::Parser;
 struct Args {}
 
 fn main() -> Result<(), KbtError> {
+    // simple_logging::log_to_file("kbt.log", LevelFilter::Info)?;
+    log::info!("start the app!");
     let _ = Args::parse();
 
     run().map(|_| println!("bye!"))
@@ -57,7 +58,7 @@ fn run() -> Result<(), KbtError> {
         MenuResult::Terminate => Ok(()),
         MenuResult::KeyboardSelected(selection) => {
             let (sender, receiver): (Sender<AppEvent>, Receiver<AppEvent>) = channel();
-            X11.subscribe(sender.clone())?;
+            X11.subscribe(sender.clone()).unwrap();
             thread::spawn(move || listen_for_control(sender).unwrap());
 
             let initial_app = App {
@@ -104,6 +105,13 @@ fn listen_for_control(sender: Sender<AppEvent>) -> Result<(), KbtError> {
 
 fn run_keyboard<B: Backend>(terminal: &mut Terminal<B>, mut state: App) -> Result<(), KbtError> {
     loop {
+        let does_fit = check_if_fits(terminal.size()?, &state);
+
+        match does_fit {
+            SizeCheckResult::Fits => terminal.draw(|f| view::draw(f, &state)),
+            SizeCheckResult::TooSmall => terminal.draw(|f| show_to_small_dialog(f)),
+        }?;
+
         let app_event = state.event_receiver.recv().unwrap();
         match app_event {
             AppEvent::KeyEvent(KeyEventType::KeyPressed(key)) => {
@@ -125,13 +133,6 @@ fn run_keyboard<B: Backend>(terminal: &mut Terminal<B>, mut state: App) -> Resul
             },
             AppEvent::ScreenResize => {}
         }
-
-        let does_fit = check_if_fits(terminal.size()?, &state);
-
-        match does_fit {
-            SizeCheckResult::Fits => terminal.draw(|f| view::draw(f, &state)),
-            SizeCheckResult::TooSmall => terminal.draw(|f| show_to_small_dialog(f)),
-        }?;
     }
 }
 

@@ -76,6 +76,8 @@ pub enum Key {
     End,
     PgDown,
 
+    Command,
+
     // arrows
     ArrowUp,
     ArrowDown,
