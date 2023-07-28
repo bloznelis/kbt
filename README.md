@@ -14,7 +14,9 @@ I got tired with semi-broken online keyboard testers, so here we go – one on a
   * Interactive menu
 
 ## Limitations
-* Only supports Linux running Xorg
+* Works on Linux, but not on Wayland
+* Might or might not work on MacOS (not tested)
+* Does not work on Windows
 
 ## Installation
 ### AUR
