@@ -1,58 +1,45 @@
-use std::{
-    sync::{mpsc::Sender, Arc, Mutex},
-    thread,
-};
+use std::sync::{mpsc::Sender, Arc, Mutex};
+
+use device_query_revamped::{CallbackGuard, DeviceEvents, DeviceState, Keycode};
 
 use crate::{
-    backend::KeyBackend,
     key::Key,
     model::{AppEvent, KeyEventType},
 };
-use device_query_revamped::{DeviceEvents, DeviceState, Keycode};
 
-pub struct X11;
+pub struct GenericKeyBackend;
 
-impl KeyBackend for X11 {
-    fn subscribe(&self, sender: Sender<AppEvent>) -> Result<(), crate::model::KbtError> {
+type KeycodeCallback = Box<dyn Fn(&Keycode) -> () + Send + Sync + 'static>;
+type KeyStreamGuard = CallbackGuard<KeycodeCallback>;
+
+impl GenericKeyBackend {
+    pub fn subscribe(sender: &Sender<AppEvent>) -> (KeyStreamGuard, KeyStreamGuard) {
+        let device_state = DeviceState::new();
         let shared_sender = Arc::new(Mutex::new(sender.clone()));
 
-        thread::spawn(move || {
-            let device_state = DeviceState::new();
-            let _guard = device_state.on_key_down(move |keycode| {
-                shared_sender
-                    .lock()
-                    .unwrap()
-                    .send(AppEvent::KeyEvent(KeyEventType::KeyPressed(map_keycode(
-                        keycode,
-                    ))))
-                    .map_err(|err| log::error!("Key down channel died {}", err))
-                    .unwrap();
-                ()
-            });
+        let key_up_guard: KeyStreamGuard = device_state.on_key_up(Box::new(move |keycode| {
+            let _ = shared_sender
+                .lock()
+                .unwrap()
+                .send(AppEvent::KeyEvent(KeyEventType::KeyReleased(map_keycode(
+                    keycode,
+                ))))
+                .map_err(|err| log::error!("Key down channel died {}", err));
+        }));
 
-            loop {}
-        });
+        let shared_sender = Arc::new(Mutex::new(sender.clone()));
 
-        let shared_sender = Arc::new(Mutex::new(sender));
+        let key_down_guard: KeyStreamGuard = device_state.on_key_down(Box::new(move |keycode| {
+            let _ = shared_sender
+                .lock()
+                .unwrap()
+                .send(AppEvent::KeyEvent(KeyEventType::KeyPressed(map_keycode(
+                    keycode,
+                ))))
+                .map_err(|err| log::error!("Key down channel died {}", err));
+        }));
 
-        thread::spawn(move || {
-            let device_state = DeviceState::new();
-            let _guard = device_state.on_key_up(move |keycode| {
-                shared_sender
-                    .lock()
-                    .unwrap()
-                    .send(AppEvent::KeyEvent(KeyEventType::KeyReleased(map_keycode(
-                        keycode,
-                    ))))
-                    .map_err(|err| log::error!("Key up channel died {}", err))
-                    .unwrap();
-                ()
-            });
-
-            loop {}
-        });
-
-        Ok(())
+        (key_up_guard, key_down_guard)
     }
 }
 
