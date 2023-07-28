@@ -1,11 +1,10 @@
-mod backend;
 mod key;
 mod keyboard60;
 mod keyboard80;
-mod linux;
 mod menu;
 mod model;
 mod view;
+mod generic_backend;
 
 use std::{
     collections::HashMap,
@@ -14,13 +13,12 @@ use std::{
     thread,
 };
 
-use backend::KeyBackend;
 use crossterm::{
     event::{self, DisableMouseCapture, Event, KeyCode, KeyModifiers},
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
-use linux::X11;
+use generic_backend::GenericKeyBackend;
 use model::*;
 use ratatui::{
     backend::{Backend, CrosstermBackend},
@@ -58,7 +56,7 @@ fn run() -> Result<(), KbtError> {
         MenuResult::Terminate => Ok(()),
         MenuResult::KeyboardSelected(selection) => {
             let (sender, receiver): (Sender<AppEvent>, Receiver<AppEvent>) = channel();
-            X11.subscribe(sender.clone()).unwrap();
+            let (_up_guard, _down_guard) = GenericKeyBackend::subscribe(&sender);
             thread::spawn(move || listen_for_control(sender).unwrap());
 
             let initial_app = App {
