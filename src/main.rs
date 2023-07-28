@@ -1,10 +1,10 @@
+mod generic_backend;
 mod key;
 mod keyboard60;
 mod keyboard80;
 mod menu;
 mod model;
 mod view;
-mod generic_backend;
 
 use std::{
     collections::HashMap,
@@ -81,18 +81,16 @@ fn listen_for_control(sender: Sender<AppEvent>) -> Result<(), KbtError> {
     loop {
         match event::read()? {
             Event::Key(key) => match key.code {
-                KeyCode::Char('c') | KeyCode::Char('q') => match key.modifiers {
-                    KeyModifiers::CONTROL => {
+                KeyCode::Char('c') | KeyCode::Char('q') => {
+                    if key.modifiers == KeyModifiers::CONTROL {
                         sender.send(AppEvent::ControlEvent(ControlEventType::Terminate))?;
                     }
-                    _ => {}
-                },
-                KeyCode::Char('r') => match key.modifiers {
-                    KeyModifiers::CONTROL => {
+                }
+                KeyCode::Char('r') => {
+                    if key.modifiers == KeyModifiers::CONTROL {
                         sender.send(AppEvent::ControlEvent(ControlEventType::Reset))?;
                     }
-                    _ => {}
-                },
+                }
                 _ => {}
             },
             Event::Resize(_, _) => sender.send(AppEvent::ScreenResize)?,

@@ -9,7 +9,7 @@ use crate::{
 
 pub struct GenericKeyBackend;
 
-type KeycodeCallback = Box<dyn Fn(&Keycode) -> () + Send + Sync + 'static>;
+type KeycodeCallback = Box<dyn Fn(&Keycode) + Send + Sync + 'static>;
 type KeyStreamGuard = CallbackGuard<KeycodeCallback>;
 
 impl GenericKeyBackend {

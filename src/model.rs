@@ -9,7 +9,7 @@ pub struct App {
 }
 
 impl App {
-    pub fn reset(&mut self) -> () {
+    pub fn reset(&mut self) {
         self.key_states = HashMap::new()
     }
 }
