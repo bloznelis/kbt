@@ -12,10 +12,10 @@ I got tired with semi-broken online keyboard testers, so here we go – one on a
   * Captures key presses directly from X server
   * Multiple keyboard layouts
   * Interactive menu
+  * Linux, MacOS support
 
 ## Limitations
-* Works on Linux, but not on Wayland
-* Works on MacOS (needs accessibility permissions to be granted)
+* Wayland is not supported
 * Does not work on Windows
 
 ## Installation
