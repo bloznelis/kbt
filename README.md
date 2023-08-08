@@ -9,13 +9,13 @@
 I got tired with semi-broken online keyboard testers, so here we go – one on a solid platform – terminal.
 
 ## Features
-  * Caputres key presses directly from X server
+  * Captures key presses directly from X server
   * Multiple keyboard layouts
   * Interactive menu
 
 ## Limitations
 * Works on Linux, but not on Wayland
-* Might work on MacOS (not tested)
+* Works on MacOS, needs accessibility permissions to be granted
 * Does not work on Windows
 
 ## Installation
@@ -26,6 +26,15 @@ I got tired with semi-broken online keyboard testers, so here we go – one on a
 `cargo install kbt`
 
 **note**: Default location of the installed binary is `$HOME/.cargo/bin`
+
+### Homebrew
+
+```
+brew tap bloznelis/tap
+brew install kbt
+```
+
+**note**: During the first run you might need to grant Accessibility access.
 
 ### Prebuilt binaries
 You can grab built binary from the latest [release](https://github.com/bloznelis/kbt/releases) (only linux-x86_64)
