@@ -15,7 +15,7 @@ I got tired with semi-broken online keyboard testers, so here we go – one on a
 
 ## Limitations
 * Works on Linux, but not on Wayland
-* Works on MacOS, needs accessibility permissions to be granted
+* Works on MacOS (needs accessibility permissions to be granted)
 * Does not work on Windows
 
 ## Installation
