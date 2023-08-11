@@ -1,4 +1,4 @@
-use std::{fmt::Display, io, sync::mpsc::Receiver, collections::HashMap};
+use std::{fmt::Display, sync::mpsc::Receiver, collections::HashMap};
 
 use crate::key::Key;
 
@@ -106,26 +106,8 @@ pub struct KbtError {
     pub message: String,
 }
 
-impl From<io::Error> for KbtError {
-    fn from(value: io::Error) -> Self {
-        KbtError {
-            message: value.to_string(),
-        }
-    }
-}
-
-impl From<Box<dyn std::error::Error>> for KbtError {
-    fn from(value: Box<dyn std::error::Error>) -> Self {
-        KbtError {
-            message: value.to_string(),
-        }
-    }
-}
-
-impl From<std::sync::mpsc::SendError<AppEvent>> for KbtError {
-    fn from(value: std::sync::mpsc::SendError<AppEvent>) -> Self {
-        KbtError {
-            message: value.to_string(),
-        }
+impl<T: ToString> From<T> for KbtError {
+    fn from(value: T) -> Self {
+        KbtError { message: value.to_string() }
     }
 }

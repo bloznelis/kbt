@@ -6,7 +6,7 @@ use ratatui::widgets::{Paragraph, Borders, BorderType, Block};
 
 use crate::key::Key;
 use crate::{App, keyboard80, keyboard60};
-use crate::model::{KeyUI, KeyboardSize, KeyState};
+use crate::model::{KeyUI, KeyboardSize, KeyState, KbtError};
 
 pub fn show_to_small_dialog<B: Backend>(frame: &mut Frame<B>) {
     let terminal_size = frame.size();
@@ -38,14 +38,14 @@ fn calc_static_row_len(row_keys: &[KeyUI]) -> u16 {
         .sum()
 }
 
-pub fn draw<B: Backend>(frame: &mut Frame<B>, state: &App) {
+pub fn draw<B: Backend>(frame: &mut Frame<B>, state: &App) -> Result<(), KbtError> {
     match state.keyboard_size {
         KeyboardSize::Keyboard80 => draw_80(frame, state),
         KeyboardSize::Keyboard60 => draw_60(frame, state),
     }
 }
 
-fn draw_80<B: Backend>(frame: &mut Frame<B>, state: &App) {
+fn draw_80<B: Backend>(frame: &mut Frame<B>, state: &App) -> Result<(), KbtError>{
     let terminal_size: Rect = frame.size();
 
     let rows = keyboard80::ROWS;
@@ -58,7 +58,7 @@ fn draw_80<B: Backend>(frame: &mut Frame<B>, state: &App) {
     let top_padding: u16 = (terminal_size.height / 2) - (layout_height / 2);
 
     for (idx, row) in rows.iter().enumerate() {
-        let idx: u16 = u16::try_from(idx).unwrap();
+        let idx: u16 = u16::try_from(idx)?;
         let row_width: u16 = calc_static_row_len(row);
         let y_offset: u16 = (row_height * idx) + top_padding;
         let rect = Rect::new(left_padding, y_offset, row_width, row_height);
@@ -66,18 +66,20 @@ fn draw_80<B: Backend>(frame: &mut Frame<B>, state: &App) {
         draw_row(row, state, rect, frame)
     }
 
-    if state
+    let less_than_5_pressed = state
         .key_states
         .values()
         .filter(|a| matches!(a, KeyState::Released | KeyState::Pressed))
-        .count()
-        < 5
-    {
+        .count() < 5;
+
+    if less_than_5_pressed {
         draw_help(top_padding + (row_height * rows_count) + 3, frame);
     }
+
+    Ok(())
 }
 
-fn draw_60<B: Backend>(frame: &mut Frame<B>, state: &App) {
+fn draw_60<B: Backend>(frame: &mut Frame<B>, state: &App) -> Result<(), KbtError> {
     let terminal_size: Rect = frame.size();
 
     let rows = keyboard60::ROWS;
@@ -92,7 +94,7 @@ fn draw_60<B: Backend>(frame: &mut Frame<B>, state: &App) {
     let top_padding: u16 = (terminal_size.height / 2) - (layout_height / 2);
 
     for (idx, row) in rows.iter().enumerate() {
-        let idx: u16 = u16::try_from(idx).unwrap();
+        let idx: u16 = u16::try_from(idx)?;
         let row_width: u16 = calc_static_row_len(row);
         let y_offset: u16 = (row_height * idx) + top_padding;
         let rect = Rect::new(left_padding, y_offset, row_width, row_height);
@@ -100,15 +102,17 @@ fn draw_60<B: Backend>(frame: &mut Frame<B>, state: &App) {
         draw_row(row, state, rect, frame)
     }
 
-    if state
+    let less_than_5_pressed = state
         .key_states
         .values()
         .filter(|a| matches!(a, KeyState::Released | KeyState::Pressed))
-        .count()
-        < 5
-    {
+        .count() < 5;
+
+    if less_than_5_pressed {
         draw_help(top_padding + (row_height * rows_count) + 3, frame);
     }
+
+    Ok(())
 }
 
 fn draw_row<B: Backend>(row_keys: &[KeyUI], state: &App, rect: Rect, frame: &mut Frame<B>) {
