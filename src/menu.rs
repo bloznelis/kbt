@@ -32,31 +32,37 @@ pub fn run_menu<B: Backend>(terminal: &mut Terminal<B>) -> Result<MenuResult, Kb
     let max_selection_idx = state.selections.len() - 1;
 
     loop {
-        terminal.draw(|f| view_menu(f, &state))?;
+        terminal.draw(|f| view_menu(f, &state).expect("Failed to draw menu"))?;
 
         if let Event::Key(key) = event::read()? {
             match key.code {
-                KeyCode::Up | KeyCode::Char('k') => {
-                    state.cursor = state.cursor.saturating_sub(1)
-                }
+                KeyCode::Up | KeyCode::Char('k') => state.cursor = state.cursor.saturating_sub(1),
                 KeyCode::Down | KeyCode::Char('j') => {
                     state.cursor = std::cmp::min(max_selection_idx, state.cursor + 1)
                 }
                 KeyCode::Enter => {
                     return Ok(MenuResult::KeyboardSelected(
-                        state.selections.get(state.cursor).unwrap().clone(),
+                        state
+                            .selections
+                            .get(state.cursor)
+                            .ok_or(KbtError {
+                                message: String::from("Failed to get a menu selection by idx"),
+                            })?
+                            .clone(),
                     ))
                 }
-                KeyCode::Char('c') | KeyCode::Char('q') => if key.modifiers == KeyModifiers::CONTROL {
-                    return Ok(MenuResult::Terminate);
-                },
+                KeyCode::Char('c') | KeyCode::Char('q') => {
+                    if key.modifiers == KeyModifiers::CONTROL {
+                        return Ok(MenuResult::Terminate);
+                    }
+                }
                 _ => {}
             }
         }
     }
 }
 
-fn view_menu<B: Backend>(frame: &mut Frame<B>, state: &MenuState) {
+fn view_menu<B: Backend>(frame: &mut Frame<B>, state: &MenuState) -> Result<(), KbtError> {
     let items: Vec<ListItem> = state
         .selections
         .iter()
@@ -97,8 +103,21 @@ fn view_menu<B: Backend>(frame: &mut Frame<B>, state: &MenuState) {
     );
 
     // render title
-    frame.render_widget(title, *layout_chunks.get(0).unwrap());
+    frame.render_widget(
+        title,
+        *layout_chunks.get(0).ok_or(KbtError {
+            message: String::from("Failed to get correct layout chunk for title"),
+        })?,
+    );
 
     // render list
-    frame.render_stateful_widget(list, *layout_chunks.get(1).unwrap(), &mut list_state)
+    frame.render_stateful_widget(
+        list,
+        *layout_chunks.get(1).ok_or(KbtError {
+            message: String::from("Failed to get correct layout chunk for list"),
+        })?,
+        &mut list_state,
+    );
+
+    Ok(())
 }

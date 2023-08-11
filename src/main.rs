@@ -57,7 +57,7 @@ fn run() -> Result<(), KbtError> {
         MenuResult::KeyboardSelected(selection) => {
             let (sender, receiver): (Sender<AppEvent>, Receiver<AppEvent>) = channel();
             let (_up_guard, _down_guard) = GenericKeyBackend::subscribe(&sender);
-            thread::spawn(move || listen_for_control(sender).unwrap());
+            let handle = thread::spawn(move || listen_for_control(sender));
 
             let initial_app = App {
                 key_states: HashMap::new(),
@@ -65,7 +65,12 @@ fn run() -> Result<(), KbtError> {
                 keyboard_size: selection,
             };
 
-            run_keyboard(&mut terminal, initial_app)
+            let res = run_keyboard(&mut terminal, initial_app);
+
+            match handle.join() {
+                Ok(_) => res,
+                Err(_) => Err(KbtError { message: String::from("Control listener thread failed to exit") }),
+            }
         }
     }?;
 
@@ -84,6 +89,7 @@ fn listen_for_control(sender: Sender<AppEvent>) -> Result<(), KbtError> {
                 KeyCode::Char('c') | KeyCode::Char('q') => {
                     if key.modifiers == KeyModifiers::CONTROL {
                         sender.send(AppEvent::ControlEvent(ControlEventType::Terminate))?;
+                        return Ok(());
                     }
                 }
                 KeyCode::Char('r') => {
@@ -104,11 +110,11 @@ fn run_keyboard<B: Backend>(terminal: &mut Terminal<B>, mut state: App) -> Resul
         let does_fit = check_if_fits(terminal.size()?, &state);
 
         match does_fit {
-            SizeCheckResult::Fits => terminal.draw(|f| view::draw(f, &state)),
+            SizeCheckResult::Fits => terminal.draw(|f| view::draw(f, &state).expect("Failed to draw miserably")),
             SizeCheckResult::TooSmall => terminal.draw(|f| show_to_small_dialog(f)),
         }?;
 
-        let app_event = state.event_receiver.recv().unwrap();
+        let app_event = state.event_receiver.recv()?;
         match app_event {
             AppEvent::KeyEvent(KeyEventType::KeyPressed(key)) => {
                 state.key_states.insert(key, KeyState::Pressed);
