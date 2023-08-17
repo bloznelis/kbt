@@ -16,7 +16,6 @@ I got tired with semi-broken online keyboard testers, so here we go – one on a
 
 ## Limitations
 * Wayland is not supported
-* Does not work on Windows
 
 ## Installation
 ### AUR
