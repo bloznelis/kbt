@@ -26,13 +26,13 @@ pub struct KeyUI {
     pub key: Key,
     pub size: KeySize,
     pub size_correction: Option<i16>,
-    pub vertical_key_part: Option<VerticalKeyPart>
+    pub vertical_key_part: Option<VerticalKeyPart>,
 }
 
 #[derive(Clone, Copy)]
 pub enum VerticalKeyPart {
-    TOP,
-    BOTTOM
+    Top,
+    Bottom,
 }
 
 #[derive(Clone, Copy)]

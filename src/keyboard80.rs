@@ -233,7 +233,7 @@ const R4: [KeyUI; 18] = [
         size: KeySize::U1,
         size_correction: None,
         vertical_key_part: None,
-    }
+    },
 ];
 
 const R3: [KeyUI; 18] = [

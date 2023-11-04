@@ -403,7 +403,7 @@ const R3: [KeyUI; 23] = [
         key: Key::Plus,
         size: KeySize::U1,
         size_correction: None,
-        vertical_key_part: Some(VerticalKeyPart::TOP),
+        vertical_key_part: Some(VerticalKeyPart::Top),
     },
 ];
 
@@ -514,7 +514,7 @@ const R2: [KeyUI; 18] = [
         key: Key::Plus,
         size: KeySize::U1,
         size_correction: None,
-        vertical_key_part: Some(VerticalKeyPart::BOTTOM),
+        vertical_key_part: Some(VerticalKeyPart::Bottom),
     },
 ];
 
@@ -637,7 +637,7 @@ const R1: [KeyUI; 20] = [
         key: Key::NumpadEnter,
         size: KeySize::U1,
         size_correction: None,
-        vertical_key_part: Some(VerticalKeyPart::TOP),
+        vertical_key_part: Some(VerticalKeyPart::Top),
     },
 ];
 
@@ -730,6 +730,6 @@ const R0: [KeyUI; 15] = [
         key: Key::NumpadEnter,
         size: KeySize::U1,
         size_correction: None,
-        vertical_key_part: Some(VerticalKeyPart::BOTTOM),
+        vertical_key_part: Some(VerticalKeyPart::Bottom),
     },
 ];

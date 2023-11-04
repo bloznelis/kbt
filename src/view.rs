@@ -173,8 +173,8 @@ fn draw_row<B: Backend>(
 
         let borders = match (ui_key.key, ui_key.vertical_key_part) {
             (Key::Separator, _) => Borders::NONE,
-            (_, Some(VerticalKeyPart::TOP)) => Borders::LEFT | Borders::RIGHT | Borders::TOP,
-            (_, Some(VerticalKeyPart::BOTTOM)) => Borders::LEFT | Borders::RIGHT | Borders::BOTTOM,
+            (_, Some(VerticalKeyPart::Top)) => Borders::LEFT | Borders::RIGHT | Borders::TOP,
+            (_, Some(VerticalKeyPart::Bottom)) => Borders::LEFT | Borders::RIGHT | Borders::BOTTOM,
             _ => Borders::ALL,
         };
 
@@ -194,7 +194,7 @@ fn draw_row<B: Backend>(
 
         let block = Block::default().borders(borders).border_type(border_type);
 
-        let label = if let Some(VerticalKeyPart::BOTTOM) = ui_key.vertical_key_part {
+        let label = if let Some(VerticalKeyPart::Bottom) = ui_key.vertical_key_part {
             String::new()
         } else {
             ui_key.key.to_string()
