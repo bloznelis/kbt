@@ -9,10 +9,9 @@
 I got tired with semi-broken online keyboard testers, so here we go – one on a solid platform – terminal.
 
 ## Features
-  * Captures key presses directly from X server
   * Multiple keyboard layouts
   * Interactive menu
-  * Linux, MacOS support
+  * Linux, MacOS, Windows support
 
 ## Limitations
 * Wayland is not supported
@@ -36,7 +35,7 @@ brew install kbt
 **note**: During the first run you might need to grant Accessibility access.
 
 ### Prebuilt binaries
-You can grab built binary from the latest [release](https://github.com/bloznelis/kbt/releases) (only linux-x86_64)
+Grab binary from the latest [release](https://github.com/bloznelis/kbt/releases)
 
 ### Building from source
   1. `make build`
