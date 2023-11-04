@@ -76,7 +76,7 @@ pub fn run_menu<B: Backend>(terminal: &mut Terminal<B>) -> Result<MenuResult, Kb
     }
 }
 
-fn view_menu<B: Backend>(frame: &mut Frame<B>, state: &MenuState) -> Result<(), KbtError> {
+fn view_menu(frame: &mut Frame, state: &MenuState) -> Result<(), KbtError> {
     let items: Vec<ListItem> = state
         .selections
         .iter()
