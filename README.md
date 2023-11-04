@@ -3,7 +3,7 @@
 <p align=center> (<b>k</b>bt <b>b</b>oard <b>t</b>ester) </p>
 <p align=center> <img alt="GitHub release (latest SemVer)" src="https://img.shields.io/github/v/release/bloznelis/kbt"> <img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/bloznelis/kbt/ci.yaml"> </p>
 
-![kbt-gif](https://github.com/bloznelis/kbt/assets/33397865/f986b89e-4482-4457-bf56-6bc53edce965)
+![kbt](https://github.com/bloznelis/kbt/assets/33397865/be95dba1-48a4-4214-88d6-a1042579f1d9)
 
 ## Motivation
 I got tired with semi-broken online keyboard testers, so here we go – one on a solid platform – terminal.
