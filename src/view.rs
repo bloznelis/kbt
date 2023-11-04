@@ -1,4 +1,3 @@
-use ratatui::backend::Backend;
 use ratatui::layout::{Alignment, Constraint, Direction, Layout, Rect};
 use ratatui::style::{Color, Modifier, Style};
 use ratatui::widgets::{Block, BorderType, Borders, Paragraph};
@@ -8,7 +7,7 @@ use crate::key::Key;
 use crate::model::{KbtError, KeyState, KeyUI, KeyboardLayout, KeyboardSize, VerticalKeyPart};
 use crate::{App, KEY_HEIGHT};
 
-pub fn show_to_small_dialog<B: Backend>(frame: &mut Frame<B>) {
+pub fn show_to_small_dialog(frame: &mut Frame) {
     let terminal_size = frame.size();
 
     let message = "window is too small :(";
@@ -29,7 +28,7 @@ pub fn show_to_small_dialog<B: Backend>(frame: &mut Frame<B>) {
     frame.render_widget(title, rect);
 }
 
-pub fn draw<B: Backend>(frame: &mut Frame<B>, state: &App) -> Result<(), KbtError> {
+pub fn draw(frame: &mut Frame, state: &App) -> Result<(), KbtError> {
     match state.keyboard_size {
         KeyboardSize::Keyboard60 => draw_layout(frame, state, &state.layouts.layout_60),
         KeyboardSize::Keyboard80 => draw_layout(frame, state, &state.layouts.layout_80),
@@ -37,11 +36,7 @@ pub fn draw<B: Backend>(frame: &mut Frame<B>, state: &App) -> Result<(), KbtErro
     }
 }
 
-fn draw_layout<B: Backend>(
-    frame: &mut Frame<B>,
-    state: &App,
-    layout: &KeyboardLayout,
-) -> Result<(), KbtError> {
+fn draw_layout(frame: &mut Frame, state: &App, layout: &KeyboardLayout) -> Result<(), KbtError> {
     let terminal_size: Rect = frame.size();
 
     let left_padding: u16 = (terminal_size.width / 2) - (layout.width / 2);
@@ -69,12 +64,7 @@ fn draw_layout<B: Backend>(
     Ok(())
 }
 
-fn draw_row<B: Backend>(
-    row_keys: &[KeyUI],
-    state: &App,
-    keyboard_rect: Rect,
-    frame: &mut Frame<B>,
-) {
+fn draw_row(row_keys: &[KeyUI], state: &App, keyboard_rect: Rect, frame: &mut Frame) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints(make_row_constraints(row_keys).as_ref())
@@ -135,7 +125,7 @@ fn make_row_constraints(keys: &[KeyUI]) -> Vec<Constraint> {
         .collect()
 }
 
-fn draw_help<B: Backend>(y_offset: u16, frame: &mut Frame<B>) {
+fn draw_help(y_offset: u16, frame: &mut Frame) {
     let terminal_size = frame.size();
     let fits = frame.size().height > y_offset;
 

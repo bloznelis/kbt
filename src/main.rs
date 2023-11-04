@@ -157,7 +157,7 @@ fn run_keyboard<B: Backend>(terminal: &mut Terminal<B>, mut state: App) -> Resul
             SizeCheckResult::Fits => {
                 terminal.draw(|f| view::draw(f, &state).expect("Failed to draw miserably"))
             }
-            SizeCheckResult::TooSmall => terminal.draw(|f| show_to_small_dialog(f)),
+            SizeCheckResult::TooSmall => terminal.draw(show_to_small_dialog),
         }?;
 
         let app_event = state.event_receiver.recv()?;
