@@ -1,7 +1,4 @@
-use crossterm::{
-    event::{self, Event, KeyCode, KeyModifiers},
-    terminal::enable_raw_mode,
-};
+use crossterm::event::{self, Event, KeyCode, KeyEventKind, KeyModifiers};
 use ratatui::{
     backend::Backend,
     layout::{Constraint, Direction, Layout, Rect},
@@ -31,7 +28,6 @@ impl Default for MenuState {
 }
 
 pub fn run_menu<B: Backend>(terminal: &mut Terminal<B>) -> Result<MenuResult, KbtError> {
-    enable_raw_mode()?;
     let mut state = MenuState::default();
     let max_selection_idx = state.selections.len() - 1;
 
@@ -39,22 +35,22 @@ pub fn run_menu<B: Backend>(terminal: &mut Terminal<B>) -> Result<MenuResult, Kb
         terminal.draw(|f| view_menu(f, &state).expect("Failed to draw menu"))?;
 
         if let Event::Key(key) = event::read()? {
-            match key.code {
-                KeyCode::Up | KeyCode::Char('k') => {
+            match (key.kind, key.code) {
+                (KeyEventKind::Press, KeyCode::Up | KeyCode::Char('k')) => {
                     state.cursor = if state.cursor == 0 {
                         max_selection_idx
                     } else {
                         state.cursor - 1
                     }
                 }
-                KeyCode::Down | KeyCode::Char('j') => {
+                (KeyEventKind::Press, KeyCode::Down | KeyCode::Char('j')) => {
                     state.cursor = if state.cursor == max_selection_idx {
                         0
                     } else {
                         state.cursor + 1
                     }
                 }
-                KeyCode::Enter => {
+                (KeyEventKind::Press, KeyCode::Enter) => {
                     return Ok(MenuResult::KeyboardSelected(
                         state
                             .selections
@@ -65,7 +61,7 @@ pub fn run_menu<B: Backend>(terminal: &mut Terminal<B>) -> Result<MenuResult, Kb
                             .clone(),
                     ))
                 }
-                KeyCode::Char('c') | KeyCode::Char('q') => {
+                (KeyEventKind::Press, KeyCode::Char('c') | KeyCode::Char('q')) => {
                     if key.modifiers == KeyModifiers::CONTROL {
                         return Ok(MenuResult::Terminate);
                     }
