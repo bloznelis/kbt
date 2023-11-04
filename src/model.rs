@@ -1,4 +1,4 @@
-use std::{fmt::Display, sync::mpsc::Receiver, collections::HashMap};
+use std::{collections::HashMap, fmt::Display, sync::mpsc::Receiver};
 
 use crate::key::Key;
 
@@ -6,6 +6,13 @@ pub struct App {
     pub key_states: HashMap<Key, KeyState>,
     pub event_receiver: Receiver<AppEvent>,
     pub keyboard_size: KeyboardSize,
+    pub rows: Rows,
+}
+
+pub struct Rows {
+    pub rows_60: Vec<Vec<KeyUI>>,
+    pub rows_80: Vec<Vec<KeyUI>>,
+    pub rows_100: Vec<Vec<KeyUI>>,
 }
 
 impl App {
@@ -14,12 +21,21 @@ impl App {
     }
 }
 
+#[derive(Clone, Copy)]
 pub struct KeyUI {
     pub key: Key,
     pub size: KeySize,
-    pub size_correction: Option<i16>, // To make layout look consistent
+    pub size_correction: Option<i16>,
+    pub vertical_key_part: Option<VerticalKeyPart>,
 }
 
+#[derive(Clone, Copy)]
+pub enum VerticalKeyPart {
+    Top,
+    Bottom,
+}
+
+#[derive(Clone, Copy)]
 pub enum KeySize {
     U05,
     U1,
@@ -29,6 +45,7 @@ pub enum KeySize {
     U225,
     U250,
     U275,
+    U4,
     U675,
 }
 
@@ -54,6 +71,7 @@ impl KeySize {
             KeySize::U225 => 11,
             KeySize::U250 => 12,
             KeySize::U275 => 14,
+            KeySize::U4 => 20,
             KeySize::U675 => 34,
         }
     }
@@ -90,6 +108,7 @@ pub enum AppEvent {
 pub enum KeyboardSize {
     Keyboard60,
     Keyboard80,
+    Keyboard100,
 }
 
 impl Display for KeyboardSize {
@@ -97,6 +116,7 @@ impl Display for KeyboardSize {
         match self {
             KeyboardSize::Keyboard60 => write!(f, "60% layout"),
             KeyboardSize::Keyboard80 => write!(f, "80% layout"),
+            KeyboardSize::Keyboard100 => write!(f, "100% layout"),
         }
     }
 }
@@ -108,6 +128,8 @@ pub struct KbtError {
 
 impl<T: ToString> From<T> for KbtError {
     fn from(value: T) -> Self {
-        KbtError { message: value.to_string() }
+        KbtError {
+            message: value.to_string(),
+        }
     }
 }

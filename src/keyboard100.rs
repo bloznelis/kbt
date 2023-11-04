@@ -1,4 +1,4 @@
-use crate::{key::Key, KeySize, KeyUI};
+use crate::{key::Key, KeySize, KeyUI, VerticalKeyPart};
 
 pub const ROWS: [&[KeyUI]; 6] = [&R5, &R4, &R3, &R2, &R1, &R0];
 
@@ -125,7 +125,7 @@ const R5: [KeyUI; 20] = [
     },
 ];
 
-const R4: [KeyUI; 18] = [
+const R4: [KeyUI; 23] = [
     KeyUI {
         key: Key::Grave,
         size: KeySize::U1,
@@ -234,9 +234,39 @@ const R4: [KeyUI; 18] = [
         size_correction: None,
         vertical_key_part: None,
     },
+    KeyUI {
+        key: Key::Separator,
+        size: KeySize::U05,
+        size_correction: None,
+        vertical_key_part: None,
+    },
+    KeyUI {
+        key: Key::NumLock,
+        size: KeySize::U1,
+        size_correction: None,
+        vertical_key_part: None,
+    },
+    KeyUI {
+        key: Key::Div,
+        size: KeySize::U1,
+        size_correction: None,
+        vertical_key_part: None,
+    },
+    KeyUI {
+        key: Key::Mul,
+        size: KeySize::U1,
+        size_correction: None,
+        vertical_key_part: None,
+    },
+    KeyUI {
+        key: Key::Minus,
+        size: KeySize::U1,
+        size_correction: None,
+        vertical_key_part: None,
+    },
 ];
 
-const R3: [KeyUI; 18] = [
+const R3: [KeyUI; 23] = [
     KeyUI {
         key: Key::Tab,
         size: KeySize::U15,
@@ -345,9 +375,39 @@ const R3: [KeyUI; 18] = [
         size_correction: None,
         vertical_key_part: None,
     },
+    KeyUI {
+        key: Key::Separator,
+        size: KeySize::U05,
+        size_correction: None,
+        vertical_key_part: None,
+    },
+    KeyUI {
+        key: Key::NumpadSeven,
+        size: KeySize::U1,
+        size_correction: None,
+        vertical_key_part: None,
+    },
+    KeyUI {
+        key: Key::NumpadEight,
+        size: KeySize::U1,
+        size_correction: None,
+        vertical_key_part: None,
+    },
+    KeyUI {
+        key: Key::NumpadNine,
+        size: KeySize::U1,
+        size_correction: None,
+        vertical_key_part: None,
+    },
+    KeyUI {
+        key: Key::Plus,
+        size: KeySize::U1,
+        size_correction: None,
+        vertical_key_part: Some(VerticalKeyPart::Top),
+    },
 ];
 
-const R2: [KeyUI; 13] = [
+const R2: [KeyUI; 18] = [
     KeyUI {
         key: Key::CapsLock,
         size: KeySize::U175,
@@ -426,9 +486,39 @@ const R2: [KeyUI; 13] = [
         size_correction: None,
         vertical_key_part: None,
     },
+    KeyUI {
+        key: Key::Separator,
+        size: KeySize::U4,
+        size_correction: Some(-1),
+        vertical_key_part: None,
+    },
+    KeyUI {
+        key: Key::NumpadFour,
+        size: KeySize::U1,
+        size_correction: None,
+        vertical_key_part: None,
+    },
+    KeyUI {
+        key: Key::NumpadFive,
+        size: KeySize::U1,
+        size_correction: None,
+        vertical_key_part: None,
+    },
+    KeyUI {
+        key: Key::NumpadSix,
+        size: KeySize::U1,
+        size_correction: None,
+        vertical_key_part: None,
+    },
+    KeyUI {
+        key: Key::Plus,
+        size: KeySize::U1,
+        size_correction: None,
+        vertical_key_part: Some(VerticalKeyPart::Bottom),
+    },
 ];
 
-const R1: [KeyUI; 15] = [
+const R1: [KeyUI; 20] = [
     KeyUI {
         key: Key::LeftShift,
         size: KeySize::U225,
@@ -519,9 +609,39 @@ const R1: [KeyUI; 15] = [
         size_correction: None,
         vertical_key_part: None,
     },
+    KeyUI {
+        key: Key::Separator,
+        size: KeySize::U15,
+        size_correction: None,
+        vertical_key_part: None,
+    },
+    KeyUI {
+        key: Key::NumpadOne,
+        size: KeySize::U1,
+        size_correction: None,
+        vertical_key_part: None,
+    },
+    KeyUI {
+        key: Key::NumpadTwo,
+        size: KeySize::U1,
+        size_correction: None,
+        vertical_key_part: None,
+    },
+    KeyUI {
+        key: Key::NumpadThree,
+        size: KeySize::U1,
+        size_correction: None,
+        vertical_key_part: None,
+    },
+    KeyUI {
+        key: Key::NumpadEnter,
+        size: KeySize::U1,
+        size_correction: None,
+        vertical_key_part: Some(VerticalKeyPart::Top),
+    },
 ];
 
-const R0: [KeyUI; 11] = [
+const R0: [KeyUI; 15] = [
     KeyUI {
         key: Key::LeftCtrl,
         size: KeySize::U15,
@@ -587,5 +707,29 @@ const R0: [KeyUI; 11] = [
         size: KeySize::U1,
         size_correction: None,
         vertical_key_part: None,
+    },
+    KeyUI {
+        key: Key::Separator,
+        size: KeySize::U05,
+        size_correction: None,
+        vertical_key_part: None,
+    },
+    KeyUI {
+        key: Key::NumpadZero,
+        size: KeySize::U2,
+        size_correction: None,
+        vertical_key_part: None,
+    },
+    KeyUI {
+        key: Key::Dot,
+        size: KeySize::U1,
+        size_correction: None,
+        vertical_key_part: None,
+    },
+    KeyUI {
+        key: Key::NumpadEnter,
+        size: KeySize::U1,
+        size_correction: None,
+        vertical_key_part: Some(VerticalKeyPart::Bottom),
     },
 ];

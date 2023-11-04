@@ -1,6 +1,6 @@
 use std::fmt;
 
-#[derive(Debug, Eq, Hash, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
 pub enum Key {
     Q,
     W,
@@ -44,7 +44,7 @@ pub enum Key {
     // symbols
     Grave,
     Hyphen,
-    Plus,
+    Equal,
     LeftBracket,
     RightBracket,
     Backslash,
@@ -104,7 +104,24 @@ pub enum Key {
     ScrollLock,
     PauseBreak,
 
-    Unknown,
+    // Numpad
+    NumLock,
+    Div,
+    Mul,
+    Minus,
+    Plus,
+    Dot,
+    NumpadEnter,
+    NumpadZero,
+    NumpadOne,
+    NumpadTwo,
+    NumpadThree,
+    NumpadFour,
+    NumpadFive,
+    NumpadSix,
+    NumpadSeven,
+    NumpadEight,
+    NumpadNine,
 }
 
 impl fmt::Display for Key {
@@ -139,7 +156,7 @@ impl fmt::Display for Key {
             Key::Nine => write!(f, "9"),
             Key::Zero => write!(f, "0"),
             Key::Hyphen => write!(f, "-"),
-            Key::Plus => write!(f, "+"),
+            Key::Equal => write!(f, "+"),
             Key::Grave => write!(f, "~`"),
             Key::ArrowUp => write!(f, "↑"),
             Key::ArrowDown => write!(f, "↓"),
@@ -149,6 +166,23 @@ impl fmt::Display for Key {
             Key::PrintScreen => write!(f, "Prn"),
             Key::ScrollLock => write!(f, "Lck"),
             Key::Separator => write!(f, ""),
+            Key::NumLock => write!(f, "NLck"),
+            Key::Div => write!(f, "/"),
+            Key::Mul => write!(f, "*"),
+            Key::Minus => write!(f, "-"),
+            Key::Plus => write!(f, "+"),
+            Key::Dot => write!(f, "."),
+            Key::NumpadEnter => write!(f, "Enter"),
+            Key::NumpadZero => write!(f, "0"),
+            Key::NumpadOne => write!(f, "1"),
+            Key::NumpadTwo => write!(f, "2"),
+            Key::NumpadThree => write!(f, "3"),
+            Key::NumpadFour => write!(f, "4"),
+            Key::NumpadFive => write!(f, "5"),
+            Key::NumpadSix => write!(f, "6"),
+            Key::NumpadSeven => write!(f, "7"),
+            Key::NumpadEight => write!(f, "8"),
+            Key::NumpadNine => write!(f, "9"),
             _ => write!(f, "{:?}", self),
         }
     }

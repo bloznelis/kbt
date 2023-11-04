@@ -20,7 +20,11 @@ struct MenuState {
 impl Default for MenuState {
     fn default() -> Self {
         MenuState {
-            selections: vec![KeyboardSize::Keyboard60, KeyboardSize::Keyboard80],
+            selections: vec![
+                KeyboardSize::Keyboard60,
+                KeyboardSize::Keyboard80,
+                KeyboardSize::Keyboard100,
+            ],
             cursor: 0,
         }
     }
