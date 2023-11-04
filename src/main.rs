@@ -34,6 +34,8 @@ use clap::Parser;
 #[command(version)]
 struct Args {}
 
+pub const KEY_HEIGHT: u16 = 3;
+
 fn main() -> Result<(), KbtError> {
     // simple_logging::log_to_file("kbt.log", LevelFilter::Info)?;
     log::info!("start the app!");
@@ -64,10 +66,12 @@ fn run() -> Result<(), KbtError> {
                 key_states: HashMap::new(),
                 event_receiver: receiver,
                 keyboard_size: selection,
-                rows: Rows {
-                    rows_60: keyboard60::ROWS.map(|row| row.to_vec()).to_vec(),
-                    rows_80: keyboard80::ROWS.map(|row| row.to_vec()).to_vec(),
-                    rows_100: keyboard100::ROWS.map(|row| row.to_vec()).to_vec(),
+                layouts: KeyboardLayouts {
+                    layout_60: prepare_layout(keyboard60::ROWS.map(|rows| rows.to_vec()).to_vec()),
+                    layout_80: prepare_layout(keyboard80::ROWS.map(|rows| rows.to_vec()).to_vec()),
+                    layout_100: prepare_layout(
+                        keyboard100::ROWS.map(|rows| rows.to_vec()).to_vec(),
+                    ),
                 },
             };
 
@@ -88,6 +92,38 @@ fn run() -> Result<(), KbtError> {
     terminal.show_cursor()?;
 
     Ok(())
+}
+
+fn prepare_layout(rows: Vec<Vec<KeyUI>>) -> KeyboardLayout {
+    let rows_count: u16 = u16::try_from(rows.len()).unwrap_or(0);
+    let height: u16 = rows_count * KEY_HEIGHT;
+    let width: u16 = rows
+        .iter()
+        .map(|row| row.iter().map(|key| key.size.static_len()).sum())
+        .max()
+        .unwrap_or(0);
+
+    let rows: Vec<Row> = rows
+        .iter()
+        .map(|row| Row {
+            width: calc_row_width(row),
+            keys: row.to_vec(),
+        })
+        .collect();
+
+    KeyboardLayout {
+        rows,
+        height,
+        width,
+        rows_count,
+    }
+}
+
+fn calc_row_width(row_keys: &[KeyUI]) -> u16 {
+    row_keys
+        .iter()
+        .map(|key| (key.size.static_len() as i16 + key.size_correction.unwrap_or(0)) as u16)
+        .sum()
 }
 
 fn listen_for_control(sender: Sender<AppEvent>) -> Result<(), KbtError> {
@@ -156,21 +192,27 @@ enum SizeCheckResult {
 fn check_if_fits(terminal_size: Rect, state: &App) -> SizeCheckResult {
     match state.keyboard_size {
         KeyboardSize::Keyboard60 => {
-            if terminal_size.width > 80 && terminal_size.height > 22 {
+            if terminal_size.width > state.layouts.layout_60.width
+                && terminal_size.height > state.layouts.layout_60.height
+            {
                 SizeCheckResult::Fits
             } else {
                 SizeCheckResult::TooSmall
             }
         }
         KeyboardSize::Keyboard80 => {
-            if terminal_size.width > 93 && terminal_size.height > 24 {
+            if terminal_size.width > state.layouts.layout_80.width
+                && terminal_size.height > state.layouts.layout_80.height
+            {
                 SizeCheckResult::Fits
             } else {
                 SizeCheckResult::TooSmall
             }
         }
         KeyboardSize::Keyboard100 => {
-            if terminal_size.width > 120 && terminal_size.height > 24 {
+            if terminal_size.width > state.layouts.layout_100.width
+                && terminal_size.height > state.layouts.layout_100.height
+            {
                 SizeCheckResult::Fits
             } else {
                 SizeCheckResult::TooSmall

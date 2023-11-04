@@ -6,13 +6,25 @@ pub struct App {
     pub key_states: HashMap<Key, KeyState>,
     pub event_receiver: Receiver<AppEvent>,
     pub keyboard_size: KeyboardSize,
-    pub rows: Rows,
+    pub layouts: KeyboardLayouts,
 }
 
-pub struct Rows {
-    pub rows_60: Vec<Vec<KeyUI>>,
-    pub rows_80: Vec<Vec<KeyUI>>,
-    pub rows_100: Vec<Vec<KeyUI>>,
+pub struct KeyboardLayouts {
+    pub layout_60: KeyboardLayout,
+    pub layout_80: KeyboardLayout,
+    pub layout_100: KeyboardLayout,
+}
+
+pub struct KeyboardLayout {
+    pub rows: Vec<Row>,
+    pub height: u16,
+    pub width: u16,
+    pub rows_count: u16,
+}
+
+pub struct Row {
+    pub keys: Vec<KeyUI>,
+    pub width: u16,
 }
 
 impl App {
@@ -61,7 +73,7 @@ pub enum KeySize {
 // ┃  |<-   ┃
 // ┗━━━━━━━━┛
 impl KeySize {
-    pub fn static_len(&self) -> i16 {
+    pub fn static_len(&self) -> u16 {
         match self {
             KeySize::U05 => 2,
             KeySize::U1 => 5,
