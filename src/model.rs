@@ -1,4 +1,4 @@
-use std::{fmt::Display, sync::mpsc::Receiver, collections::HashMap};
+use std::{collections::HashMap, fmt::Display, sync::mpsc::Receiver};
 
 use crate::key::Key;
 
@@ -29,6 +29,7 @@ pub enum KeySize {
     U225,
     U250,
     U275,
+    U4,
     U675,
 }
 
@@ -54,6 +55,7 @@ impl KeySize {
             KeySize::U225 => 11,
             KeySize::U250 => 12,
             KeySize::U275 => 14,
+            KeySize::U4 => 20,
             KeySize::U675 => 34,
         }
     }
@@ -90,6 +92,7 @@ pub enum AppEvent {
 pub enum KeyboardSize {
     Keyboard60,
     Keyboard80,
+    Keyboard100,
 }
 
 impl Display for KeyboardSize {
@@ -97,6 +100,7 @@ impl Display for KeyboardSize {
         match self {
             KeyboardSize::Keyboard60 => write!(f, "60% layout"),
             KeyboardSize::Keyboard80 => write!(f, "80% layout"),
+            KeyboardSize::Keyboard100 => write!(f, "100% layout"),
         }
     }
 }
@@ -108,6 +112,8 @@ pub struct KbtError {
 
 impl<T: ToString> From<T> for KbtError {
     fn from(value: T) -> Self {
-        KbtError { message: value.to_string() }
+        KbtError {
+            message: value.to_string(),
+        }
     }
 }

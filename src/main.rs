@@ -2,6 +2,7 @@ mod generic_backend;
 mod key;
 mod keyboard60;
 mod keyboard80;
+mod keyboard100;
 mod menu;
 mod model;
 mod view;
@@ -154,6 +155,13 @@ fn check_if_fits(terminal_size: Rect, state: &App) -> SizeCheckResult {
         }
         KeyboardSize::Keyboard80 => {
             if terminal_size.width > 93 && terminal_size.height > 24 {
+                SizeCheckResult::Fits
+            } else {
+                SizeCheckResult::TooSmall
+            }
+        }
+        KeyboardSize::Keyboard100 => {
+            if terminal_size.width > 120 && terminal_size.height > 24 {
                 SizeCheckResult::Fits
             } else {
                 SizeCheckResult::TooSmall

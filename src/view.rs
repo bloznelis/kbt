@@ -5,7 +5,7 @@ use ratatui::style::{Style, Color, Modifier};
 use ratatui::widgets::{Paragraph, Borders, BorderType, Block};
 
 use crate::key::Key;
-use crate::{App, keyboard80, keyboard60};
+use crate::{App, keyboard80, keyboard60, keyboard100};
 use crate::model::{KeyUI, KeyboardSize, KeyState, KbtError};
 
 pub fn show_to_small_dialog<B: Backend>(frame: &mut Frame<B>) {
@@ -42,6 +42,7 @@ pub fn draw<B: Backend>(frame: &mut Frame<B>, state: &App) -> Result<(), KbtErro
     match state.keyboard_size {
         KeyboardSize::Keyboard80 => draw_80(frame, state),
         KeyboardSize::Keyboard60 => draw_60(frame, state),
+        KeyboardSize::Keyboard100 => draw_100(frame, state),
     }
 }
 
@@ -69,7 +70,7 @@ fn draw_80<B: Backend>(frame: &mut Frame<B>, state: &App) -> Result<(), KbtError
     let less_than_5_pressed = state
         .key_states
         .values()
-        .filter(|a| matches!(a, KeyState::Released | KeyState::Pressed))
+        .filter(|key_state| matches!(key_state, KeyState::Released | KeyState::Pressed))
         .count() < 5;
 
     if less_than_5_pressed {
@@ -105,7 +106,7 @@ fn draw_60<B: Backend>(frame: &mut Frame<B>, state: &App) -> Result<(), KbtError
     let less_than_5_pressed = state
         .key_states
         .values()
-        .filter(|a| matches!(a, KeyState::Released | KeyState::Pressed))
+        .filter(|key_state| matches!(key_state, KeyState::Released | KeyState::Pressed))
         .count() < 5;
 
     if less_than_5_pressed {
@@ -114,6 +115,41 @@ fn draw_60<B: Backend>(frame: &mut Frame<B>, state: &App) -> Result<(), KbtError
 
     Ok(())
 }
+
+fn draw_100<B: Backend>(frame: &mut Frame<B>, state: &App) -> Result<(), KbtError> {
+    let terminal_size: Rect = frame.size();
+
+    let rows = keyboard100::ROWS;
+    let rows_count: u16 = 6;
+
+    let row_height: u16 = 3;
+    let layout_height: u16 = 3 * rows_count;
+    let layout_width: u16 = 120;
+    let left_padding: u16 = (terminal_size.width / 2) - (layout_width / 2);
+    let top_padding: u16 = (terminal_size.height / 2) - (layout_height / 2);
+
+    for (idx, row) in rows.iter().enumerate() {
+        let idx: u16 = u16::try_from(idx)?;
+        let row_width: u16 = calc_static_row_len(row);
+        let y_offset: u16 = (row_height * idx) + top_padding;
+        let rect = Rect::new(left_padding, y_offset, row_width, row_height);
+
+        draw_row(row, state, rect, frame)
+    }
+
+    let less_than_5_pressed = state
+        .key_states
+        .values()
+        .filter(|key_state| matches!(key_state, KeyState::Released | KeyState::Pressed))
+        .count() < 5;
+
+    if less_than_5_pressed {
+        draw_help(top_padding + (row_height * rows_count) + 3, frame);
+    }
+
+    Ok(())
+}
+
 
 fn draw_row<B: Backend>(row_keys: &[KeyUI], state: &App, rect: Rect, frame: &mut Frame<B>) {
     let chunks = Layout::default()
