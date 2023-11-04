@@ -143,5 +143,11 @@ fn map_keycode(keycode: &Keycode) -> Key {
         Keycode::Numpad7 => Key::NumpadSeven,
         Keycode::Numpad8 => Key::NumpadEight,
         Keycode::Numpad9 => Key::NumpadNine,
+        Keycode::Numlock => Key::NumLock,
+        Keycode::NumpadDecimal => Key::Decimal,
+        Keycode::NumpadEnter => Key::NumpadEnter,
+        Keycode::Scroll => Key::ScrollLock,
+        Keycode::Print => Key::PrintScreen,
+        Keycode::Pause => Key::PauseBreak,
     }
 }

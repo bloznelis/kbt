@@ -721,7 +721,7 @@ const R0: [KeyUI; 15] = [
         vertical_key_part: None,
     },
     KeyUI {
-        key: Key::Dot,
+        key: Key::Decimal,
         size: KeySize::U1,
         size_correction: None,
         vertical_key_part: None,
