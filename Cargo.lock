@@ -248,7 +248,7 @@ dependencies = [
 
 [[package]]
 name = "kbt"
-version = "2.0.3"
+version = "2.0.4"
 dependencies = [
  "clap",
  "crossterm",
