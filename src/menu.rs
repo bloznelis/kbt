@@ -53,7 +53,7 @@ pub fn run_menu<B: Backend>(terminal: &mut Terminal<B>) -> Result<MenuResult, Kb
                     } else {
                         state.cursor + 1
                     }
-                },
+                }
                 KeyCode::Enter => {
                     return Ok(MenuResult::KeyboardSelected(
                         state
