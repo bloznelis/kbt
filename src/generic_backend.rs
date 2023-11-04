@@ -143,6 +143,5 @@ fn map_keycode(keycode: &Keycode) -> Key {
         Keycode::Numpad7 => Key::NumpadSeven,
         Keycode::Numpad8 => Key::NumpadEight,
         Keycode::Numpad9 => Key::NumpadNine,
-        _ => Key::Unknown,
     }
 }

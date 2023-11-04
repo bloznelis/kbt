@@ -6,6 +6,13 @@ pub struct App {
     pub key_states: HashMap<Key, KeyState>,
     pub event_receiver: Receiver<AppEvent>,
     pub keyboard_size: KeyboardSize,
+    pub rows: Rows,
+}
+
+pub struct Rows {
+    pub rows_60: Vec<Vec<KeyUI>>,
+    pub rows_80: Vec<Vec<KeyUI>>,
+    pub rows_100: Vec<Vec<KeyUI>>,
 }
 
 impl App {
@@ -14,12 +21,21 @@ impl App {
     }
 }
 
+#[derive(Clone, Copy)]
 pub struct KeyUI {
     pub key: Key,
     pub size: KeySize,
-    pub size_correction: Option<i16>, // To make layout look consistent
+    pub size_correction: Option<i16>,
+    pub vertical_key_part: Option<VerticalKeyPart>
 }
 
+#[derive(Clone, Copy)]
+pub enum VerticalKeyPart {
+    TOP,
+    BOTTOM
+}
+
+#[derive(Clone, Copy)]
 pub enum KeySize {
     U05,
     U1,

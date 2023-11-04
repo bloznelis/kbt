@@ -1,8 +1,8 @@
 mod generic_backend;
 mod key;
+mod keyboard100;
 mod keyboard60;
 mod keyboard80;
-mod keyboard100;
 mod menu;
 mod model;
 mod view;
@@ -64,13 +64,20 @@ fn run() -> Result<(), KbtError> {
                 key_states: HashMap::new(),
                 event_receiver: receiver,
                 keyboard_size: selection,
+                rows: Rows {
+                    rows_60: keyboard60::ROWS.map(|row| row.to_vec()).to_vec(),
+                    rows_80: keyboard80::ROWS.map(|row| row.to_vec()).to_vec(),
+                    rows_100: keyboard100::ROWS.map(|row| row.to_vec()).to_vec(),
+                },
             };
 
             let res = run_keyboard(&mut terminal, initial_app);
 
             match handle.join() {
                 Ok(_) => res,
-                Err(_) => Err(KbtError { message: String::from("Control listener thread failed to exit") }),
+                Err(_) => Err(KbtError {
+                    message: String::from("Control listener thread failed to exit"),
+                }),
             }
         }
     }?;
@@ -111,7 +118,9 @@ fn run_keyboard<B: Backend>(terminal: &mut Terminal<B>, mut state: App) -> Resul
         let does_fit = check_if_fits(terminal.size()?, &state);
 
         match does_fit {
-            SizeCheckResult::Fits => terminal.draw(|f| view::draw(f, &state).expect("Failed to draw miserably")),
+            SizeCheckResult::Fits => {
+                terminal.draw(|f| view::draw(f, &state).expect("Failed to draw miserably"))
+            }
             SizeCheckResult::TooSmall => terminal.draw(|f| show_to_small_dialog(f)),
         }?;
 

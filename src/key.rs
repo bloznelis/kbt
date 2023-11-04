@@ -1,6 +1,6 @@
 use std::fmt;
 
-#[derive(Debug, Eq, Hash, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
 pub enum Key {
     Q,
     W,
@@ -122,8 +122,6 @@ pub enum Key {
     NumpadSeven,
     NumpadEight,
     NumpadNine,
-
-    Unknown,
 }
 
 impl fmt::Display for Key {
