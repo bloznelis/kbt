@@ -1,6 +1,6 @@
 [package]
 name = "kbt"
-version = "2.0.1"
+version = "2.0.2"
 authors = ["bloznelis <lukas.bloznelis@gmail.com>"]
 description = "Keyboard tester in terminal"
 license = "MIT"
