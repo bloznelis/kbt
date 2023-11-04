@@ -40,10 +40,20 @@ pub fn run_menu<B: Backend>(terminal: &mut Terminal<B>) -> Result<MenuResult, Kb
 
         if let Event::Key(key) = event::read()? {
             match key.code {
-                KeyCode::Up | KeyCode::Char('k') => state.cursor = state.cursor.saturating_sub(1),
-                KeyCode::Down | KeyCode::Char('j') => {
-                    state.cursor = std::cmp::min(max_selection_idx, state.cursor + 1)
+                KeyCode::Up | KeyCode::Char('k') => {
+                    state.cursor = if state.cursor == 0 {
+                        max_selection_idx
+                    } else {
+                        state.cursor - 1
+                    }
                 }
+                KeyCode::Down | KeyCode::Char('j') => {
+                    state.cursor = if state.cursor == max_selection_idx {
+                        0
+                    } else {
+                        state.cursor + 1
+                    }
+                },
                 KeyCode::Enter => {
                     return Ok(MenuResult::KeyboardSelected(
                         state
