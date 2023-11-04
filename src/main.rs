@@ -12,10 +12,11 @@ use std::{
     io,
     sync::mpsc::{channel, Receiver, Sender},
     thread,
+    time::Duration,
 };
 
 use crossterm::{
-    event::{self, DisableMouseCapture, Event, KeyCode, KeyModifiers},
+    event::{self, Event, KeyCode, KeyModifiers},
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
@@ -47,7 +48,7 @@ fn main() -> Result<(), KbtError> {
 fn run() -> Result<(), KbtError> {
     let mut stdout = io::stdout();
 
-    execute!(stdout, EnterAlternateScreen, DisableMouseCapture)?;
+    execute!(stdout, EnterAlternateScreen)?;
     enable_raw_mode()?;
 
     let backend = CrosstermBackend::new(stdout);
@@ -150,6 +151,11 @@ fn listen_for_control(sender: Sender<AppEvent>) -> Result<(), KbtError> {
 }
 
 fn run_keyboard<B: Backend>(terminal: &mut Terminal<B>, mut state: App) -> Result<(), KbtError> {
+    // XXX: Drop first event, which is usually release of Return, to have first draw without keys pressed
+    _ = state
+        .event_receiver
+        .recv_timeout(Duration::from_millis(100));
+
     loop {
         let does_fit = check_if_fits(terminal.size()?, &state);
 
