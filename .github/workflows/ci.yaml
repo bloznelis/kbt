@@ -51,6 +51,11 @@ jobs:
         with:
           targets: ${{ matrix.target }}
 
+      - name: Install x11 dev for Linux
+        if: matrix.build == 'linux'
+        run: |
+          sudo apt install libx11-dev
+
       - name: Build
         uses: actions-rs/cargo@v1
         with:
