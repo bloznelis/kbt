@@ -196,9 +196,9 @@ dependencies = [
 
 [[package]]
 name = "device_query_revamped"
-version = "2.0.0"
+version = "2.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2f717df22fbd8aa0f7c7884492819bd8fcf7e5cb725416bcf9c72f427e017a8e"
+checksum = "7da7679d31bd22b001c8af49f2a689c95ef3b06893d8f19f5a0ae30c65b7999f"
 dependencies = [
  "lazy_static",
  "macos-accessibility-client",
