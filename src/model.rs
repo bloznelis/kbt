@@ -5,14 +5,7 @@ use crate::key::Key;
 pub struct App {
     pub key_states: HashMap<Key, KeyState>,
     pub event_receiver: Receiver<AppEvent>,
-    pub keyboard_size: KeyboardSize,
-    pub layouts: KeyboardLayouts,
-}
-
-pub struct KeyboardLayouts {
-    pub layout_60: KeyboardLayout,
-    pub layout_80: KeyboardLayout,
-    pub layout_100: KeyboardLayout,
+    pub layout: KeyboardLayout,
 }
 
 pub struct KeyboardLayout {

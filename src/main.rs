@@ -27,7 +27,7 @@ use ratatui::{
     layout::Rect,
     Terminal,
 };
-use view::show_to_small_dialog;
+use view::draw_too_small;
 
 use clap::Parser;
 
@@ -62,18 +62,22 @@ fn run() -> Result<(), KbtError> {
             let (sender, receiver): (Sender<AppEvent>, Receiver<AppEvent>) = channel();
             let (_up_guard, _down_guard) = GenericKeyBackend::subscribe(&sender);
             let handle = thread::spawn(move || listen_for_control(sender));
+            let layout = match &selection {
+                    KeyboardSize::Keyboard60 => {
+                        prepare_layout(keyboard60::ROWS.map(|rows| rows.to_vec()).to_vec())
+                    }
+                    KeyboardSize::Keyboard80 => {
+                        prepare_layout(keyboard80::ROWS.map(|rows| rows.to_vec()).to_vec())
+                    }
+                    KeyboardSize::Keyboard100 => {
+                        prepare_layout(keyboard100::ROWS.map(|rows| rows.to_vec()).to_vec())
+                    }
+                };
 
             let initial_app = App {
                 key_states: HashMap::new(),
                 event_receiver: receiver,
-                keyboard_size: selection,
-                layouts: KeyboardLayouts {
-                    layout_60: prepare_layout(keyboard60::ROWS.map(|rows| rows.to_vec()).to_vec()),
-                    layout_80: prepare_layout(keyboard80::ROWS.map(|rows| rows.to_vec()).to_vec()),
-                    layout_100: prepare_layout(
-                        keyboard100::ROWS.map(|rows| rows.to_vec()).to_vec(),
-                    ),
-                },
+                layout,
             };
 
             let res = run_keyboard(&mut terminal, initial_app);
@@ -157,14 +161,11 @@ fn run_keyboard<B: Backend>(terminal: &mut Terminal<B>, mut state: App) -> Resul
         .recv_timeout(Duration::from_millis(100));
 
     loop {
-        let does_fit = check_if_fits(terminal.size()?, &state);
-
-        match does_fit {
-            SizeCheckResult::Fits => {
-                terminal.draw(|f| view::draw(f, &state).expect("Failed to draw miserably"))
-            }
-            SizeCheckResult::TooSmall => terminal.draw(show_to_small_dialog),
-        }?;
+        if layout_fits(terminal.size()?, &state) {
+            terminal.draw(|f| view::draw(f, &state).expect("Failed to draw"))?
+        } else {
+            terminal.draw(draw_too_small)?
+        };
 
         let app_event = state.event_receiver.recv()?;
         match app_event {
@@ -190,39 +191,6 @@ fn run_keyboard<B: Backend>(terminal: &mut Terminal<B>, mut state: App) -> Resul
     }
 }
 
-enum SizeCheckResult {
-    Fits,
-    TooSmall,
-}
-
-fn check_if_fits(terminal_size: Rect, state: &App) -> SizeCheckResult {
-    match state.keyboard_size {
-        KeyboardSize::Keyboard60 => {
-            if terminal_size.width > state.layouts.layout_60.width
-                && terminal_size.height > state.layouts.layout_60.height
-            {
-                SizeCheckResult::Fits
-            } else {
-                SizeCheckResult::TooSmall
-            }
-        }
-        KeyboardSize::Keyboard80 => {
-            if terminal_size.width > state.layouts.layout_80.width
-                && terminal_size.height > state.layouts.layout_80.height
-            {
-                SizeCheckResult::Fits
-            } else {
-                SizeCheckResult::TooSmall
-            }
-        }
-        KeyboardSize::Keyboard100 => {
-            if terminal_size.width > state.layouts.layout_100.width
-                && terminal_size.height > state.layouts.layout_100.height
-            {
-                SizeCheckResult::Fits
-            } else {
-                SizeCheckResult::TooSmall
-            }
-        }
-    }
+fn layout_fits(terminal_size: Rect, state: &App) -> bool {
+    terminal_size.width > state.layout.width && terminal_size.height > state.layout.height
 }

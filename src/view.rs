@@ -4,39 +4,11 @@ use ratatui::widgets::{Block, BorderType, Borders, Paragraph};
 use ratatui::Frame;
 
 use crate::key::Key;
-use crate::model::{KbtError, KeyState, KeyUI, KeyboardLayout, KeyboardSize, VerticalKeyPart};
+use crate::model::{KbtError, KeyState, KeyUI, VerticalKeyPart};
 use crate::{App, KEY_HEIGHT};
 
-pub fn show_to_small_dialog(frame: &mut Frame) {
-    let terminal_size = frame.size();
-
-    let message = "window is too small :(";
-
-    let message_height: u16 = 1;
-    let message_width: u16 = 25;
-    let left_padding: u16 = (terminal_size.width / 2) - (message_width / 2);
-    let top_padding: u16 = (terminal_size.height / 2) - (message_height / 2);
-
-    let rect = Rect::new(left_padding, top_padding, message_width, message_height);
-
-    let title = Paragraph::new(message).style(
-        Style::default()
-            .fg(Color::Yellow)
-            .add_modifier(Modifier::ITALIC),
-    );
-
-    frame.render_widget(title, rect);
-}
-
 pub fn draw(frame: &mut Frame, state: &App) -> Result<(), KbtError> {
-    match state.keyboard_size {
-        KeyboardSize::Keyboard60 => draw_layout(frame, state, &state.layouts.layout_60),
-        KeyboardSize::Keyboard80 => draw_layout(frame, state, &state.layouts.layout_80),
-        KeyboardSize::Keyboard100 => draw_layout(frame, state, &state.layouts.layout_100),
-    }
-}
-
-fn draw_layout(frame: &mut Frame, state: &App, layout: &KeyboardLayout) -> Result<(), KbtError> {
+    let layout = &state.layout;
     let terminal_size: Rect = frame.size();
 
     let left_padding: u16 = (terminal_size.width / 2) - (layout.width / 2);
@@ -143,4 +115,25 @@ fn draw_help(y_offset: u16, frame: &mut Frame) {
 
         frame.render_widget(help, rect);
     }
+}
+
+pub fn draw_too_small(frame: &mut Frame) {
+    let terminal_size = frame.size();
+
+    let message = "window is too small :(";
+
+    let message_height: u16 = 1;
+    let message_width: u16 = 25;
+    let left_padding: u16 = (terminal_size.width / 2) - (message_width / 2);
+    let top_padding: u16 = (terminal_size.height / 2) - (message_height / 2);
+
+    let rect = Rect::new(left_padding, top_padding, message_width, message_height);
+
+    let title = Paragraph::new(message).style(
+        Style::default()
+            .fg(Color::Yellow)
+            .add_modifier(Modifier::ITALIC),
+    );
+
+    frame.render_widget(title, rect);
 }
