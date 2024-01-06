@@ -34,5 +34,5 @@ then
     
 
 else
-  echo -e "Realeases can only be created from \033[1mmaster\033[0m branch"
+  echo -e "Releases can only be created from \033[1mmaster\033[0m branch"
 fi
