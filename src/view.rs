@@ -39,7 +39,7 @@ pub fn draw(frame: &mut Frame, state: &App) -> Result<(), KbtError> {
 fn draw_row(row_keys: &[KeyUI], state: &App, keyboard_rect: Rect, frame: &mut Frame) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
-        .constraints(make_row_constraints(row_keys).as_ref())
+        .constraints(make_row_constraints(row_keys))
         .split(keyboard_rect);
 
     for (x_pos, ui_key) in row_keys.iter().enumerate() {
