@@ -35,7 +35,7 @@ brew install kbt
 **note**: During the first run you might need to grant Accessibility access.
 
 ### Prebuilt binaries
-Grab binary from the latest [release](https://github.com/bloznelis/kbt/releases)
+Grab a binary from the latest [release](https://github.com/bloznelis/kbt/releases)
 
 ### Building from source
   1. `make build`
