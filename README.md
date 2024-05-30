@@ -17,8 +17,8 @@ I got tired with semi-broken online keyboard testers, so here we go – one on a
 * Wayland is not supported
 
 ## Installation
-### AUR
-`paru -S kbt`
+### Arch Linux
+`pacman -S kbt`
 
 ### Cargo
 `cargo install kbt`
