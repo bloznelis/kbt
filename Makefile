@@ -1,4 +1,3 @@
-GO_FLAGS   ?=
 NAME       := kbt
 PACKAGE    := github.com/bloznelis/$(NAME)
 GIT_REV     = $(shell git rev-parse --short HEAD)
