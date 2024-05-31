@@ -1,4 +1,4 @@
-use std::sync::{mpsc::Sender, Arc, Mutex};
+use std::sync::mpsc::Sender;
 
 use device_query_revamped::{CallbackGuard, DeviceEvents, DeviceState, Keycode};
 
@@ -15,24 +15,19 @@ type KeyStreamGuard = CallbackGuard<KeycodeCallback>;
 impl GenericKeyBackend {
     pub fn subscribe(sender: &Sender<AppEvent>) -> (KeyStreamGuard, KeyStreamGuard) {
         let device_state = DeviceState::new();
-        let shared_sender = Arc::new(Mutex::new(sender.clone()));
+        let sender_for_key_up = sender.clone();
 
         let key_up_guard: KeyStreamGuard = device_state.on_key_up(Box::new(move |keycode| {
-            let _ = shared_sender
-                .lock()
-                .unwrap()
+            let _ = sender_for_key_up
                 .send(AppEvent::KeyEvent(KeyEventType::KeyReleased(map_keycode(
                     keycode,
                 ))))
                 .map_err(|err| log::error!("Key down channel died {}", err));
         }));
 
-        let shared_sender = Arc::new(Mutex::new(sender.clone()));
-
+        let sender_for_key_down = sender.clone();
         let key_down_guard: KeyStreamGuard = device_state.on_key_down(Box::new(move |keycode| {
-            let _ = shared_sender
-                .lock()
-                .unwrap()
+            let _ = sender_for_key_down
                 .send(AppEvent::KeyEvent(KeyEventType::KeyPressed(map_keycode(
                     keycode,
                 ))))

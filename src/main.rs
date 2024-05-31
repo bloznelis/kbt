@@ -38,7 +38,6 @@ struct Args {}
 pub const KEY_HEIGHT: u16 = 3;
 
 fn main() -> Result<(), KbtError> {
-    // simple_logging::log_to_file("kbt.log", LevelFilter::Info)?;
     log::info!("start the app!");
     let _ = Args::parse();
 
