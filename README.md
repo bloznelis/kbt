@@ -20,6 +20,9 @@ I got tired with semi-broken online keyboard testers, so here we go – one on a
 ### Arch Linux
 `pacman -S kbt`
 
+### nix
+`nix-shell -p kbt`
+
 ### Cargo
 `cargo install kbt`
 
