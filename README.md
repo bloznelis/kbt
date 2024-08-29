@@ -6,7 +6,7 @@
 ![kbt-1240](https://github.com/bloznelis/kbt/assets/33397865/d9af5ee9-c981-4be7-bcc7-144f3485805a)
 
 ## Motivation
-I got tired with semi-broken online keyboard testers, so here we go – one on a solid platform – terminal.
+I got tired with semi-broken online keyboard testers, so here we are – one on a solid platform – terminal.
 
 ## Features
   * Multiple keyboard layouts
