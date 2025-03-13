@@ -1,7 +1,7 @@
 <h1 align=center> kbt </h1>
 
 <p align=center> (<b>k</b>bt <b>b</b>oard <b>t</b>ester) </p>
-<p align=center> <img alt="GitHub release (latest SemVer)" src="https://img.shields.io/github/v/release/bloznelis/kbt"> <img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/bloznelis/kbt/ci.yaml"> </p>
+<p align=center> <img alt="GitHub release (latest SemVer)" src="https://img.shields.io/github/v/release/bloznelis/kbt"> <a href="https://crates.io/crates/kbt"> <img alt="crates.io" src="https://img.shields.io/crates/v/kbt?color=%23d39d7d"> </a> <img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/bloznelis/kbt/ci.yaml"> </p>
 
 ![kbt-1240](https://github.com/bloznelis/kbt/assets/33397865/d9af5ee9-c981-4be7-bcc7-144f3485805a)
 
